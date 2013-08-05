@@ -26,10 +26,10 @@
 	    <param-value>org.atmosphere.interceptor.HeartbeatInterceptor</param-value>
 	 </init-param>
 	 <listener>
-	 	<listener-class>org.atmosphere.coptermotion.SerialComInit</listener-class>
+	 	<listener-class>communication.SerialComInit</listener-class>
 	 </listener>
 	 <listener>
-	 	<listener-class>org.atmosphere.coptermotion.ChatAtmosphereHandler</listener-class>
+	 	<listener-class>communication.ChatAtmosphereHandler</listener-class>
      </listener>
       	
 </web-app>
