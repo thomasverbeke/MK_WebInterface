@@ -1,0 +1,265 @@
+<!DOCTYPE html>
+
+<script type="text/javascript" src="jquery/jquery-1.7.2.js"></script>
+<script type="text/javascript" src="jquery/jquery.atmosphere.js"></script>
+<script type="text/javascript" src="jquery/application.js"></script>
+
+
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <title>MikroKopter Web Test Platform</title>
+
+    <style>
+        * {
+            font-family: tahoma;
+            font-size: 12px;
+            padding: 0px;
+            margin: 0px;
+        }
+
+        p {
+            line-height: 18px;
+        }
+
+        .header, h1 {
+        	width:100%;
+        	height:50px;
+			font-size:30px;
+			margin-left:10px;
+        }
+		
+		#intervalMenu {
+			margin-left:10px;
+			width:90%;
+			position:absolute;
+			background-color:#999;
+		}
+		
+		#OSDData {
+			float:left;
+			margin:10px;	
+		}
+		
+		#THREEDData {
+			float:left;
+			margin:10px;
+			margin-left:50px;
+		}
+	
+		#DebugData{
+			float:left;
+			margin:10px;
+			margin-left:50px;
+		}
+		
+		button, input {
+			width:100px;
+			margin-left:20px;
+			background-color:#999;
+			border-color:#666;
+		}
+		#realtimeDataMenu {
+			margin-left:10px;
+			position:relative;
+			top:40px;
+			width:90%;
+			min-height:370px;
+			background-color:#CCC;
+		}
+		#sendingCommandMenu {
+			margin-left:10px;
+			position:relative;
+			min-height:50px;
+			top:42px;
+			width:90%;
+			background-color:#CCC;
+			clear:both;
+		}
+		#atmosphereMenu {
+			margin-left:10px;
+			position:relative;
+			top:46px;
+			min-height:40px;
+			width:90%;
+			margin-left:10px;
+			background-color:#999;	
+		}	
+		#OSD_Container {
+			float:left;
+			margin:10px;
+			margin-left:50px;
+		}
+		#Motor_Container {
+			float:left;
+			margin:10px;
+			margin-left:50px;
+		}
+		
+		#atmosphereTitle{
+			float:left;
+			margin:10px;
+			margin-left:50px;
+		}
+		
+		#server_status{
+			float:left;
+			margin:10px;
+			margin-left:100px;
+			color:darkred;
+		}
+		#SendWP {
+			margin:5px;
+			float:left;
+			margin-left:30px;
+		}
+		#ReqWP {
+			margin:5px;
+			margin-left:30px;
+			float:left;
+		}
+		#SerialTest {
+			margin:5px;
+			float:left;
+			margin-left:30px;
+		}		
+		
+		#EngineTest {
+			margin:5px;
+			float:left;
+			margin-left:30px;
+			
+		}
+		#WP_Settings {
+			padding:20px;
+			float:left;
+			margin-left:30px;
+			background-color:#999;	
+			position:absolute;
+			top:600px;
+			
+		}
+		#red {
+			color:red;		
+		}
+		#green {
+			color:green;		
+		}
+		
+		label {
+			display: block;
+		    float: left;
+		    width: 150px;
+		}
+	
+	 </style>
+</head>
+<body>
+<div id="header"><h1>MikroKopter Communication Test Page</h1></div>
+<div id="intervalMenu">
+	<div id="OSDData" >
+		OSD Data <input type="text" value="1000" name="OSDInterval"><button onclick="sendcommand('OSDDataInterval',this);">Set Interval</button>
+	</div>
+	<div id="THREEDData">
+		3D Data<input type="text" value="1000" name="3DDataInterval"><button onclick="sendcommand('3DDataInterval',this);">Set Interval</button>
+	</div>
+	<div id="DebugData">
+		Debug Data <input type="text" value="1000" name="DebugDataInterval"><button  onclick="sendcommand('DebugReqInterval',this);">Set Interval</button>
+	</div>
+</div>
+
+<div id="realtimeDataMenu">
+	<div id="OSD_Container">
+    
+	<h2>OSD</h2>
+    	<div id="OSD0">CurrentPosition: 0 Lat / 0 Lng / 0 Alt</div>
+		<div id="OSD1">TargetPosition: 0 Lat / 0 Lng / 0 Alt</div>
+		<div id="OSD2">HomePosition: 0 Lat / 0 Lng / 0 Alt</div>
+		<div id="OSD3">WPIndex/WPNumber: 0/0</div>
+		<div id="OSD4">StatsInUse: 0</div>
+		<div id="OSD5">Altimeter (air pressure): 0</div>
+        <div id="OSD6">Variometer (climb/sink rate): 0</div>
+        <div id="OSD7">FlyingTime: 0s</div>
+        <div id="OSD8">Battery Voltage: 0V</div> 
+        <div id="OSD9">GroundSpeed: 0cm/s</div>
+        <div id="OSD10">Heading (angle to north): 0°</div>
+        <div id="OSD11">CompassHeading: 0°</div>
+        <div id="OSD12">AngleNick: 0</div>
+        <div id="OSD13">AngleRoll: 0</div>
+        <div id="OSD14">RCQuality: 0</div>
+        <div id="OSD15">OperatingRadius: 0</div>
+        <div id="OSD16">TopSpeed: 0</div>
+        <div id="OSD17">TargetHoldTime: 0</div>
+        <div id="OSD18">SetPointAltitude: 0</div>
+        <div id="OSD19">Current: 0</div>
+        <div id="OSD20">Gas: 0</div>
+        <div id="OSD21">UsedCapacity: 0</div>
+        <div id="OSD22">Version: 0</div>    
+	</div>
+	<div id="THREEDData">
+		<h2>3D Data</h2>
+		<div id="AngleNick">AngleNick: 0</div>
+		<div id="AngleRoll">AngleRoll: 0</div>
+		<div id="CentroidNick">CentroidNick: 0</div>
+		<div id="CentroidRoll">CentroidNick: 0</div>
+		<div id="CentroidYaw">CentroidYaw: 0</div>
+		<div id="Heading">Heading: 0</div>
+	</div>
+    
+    <div id="Motor_Container">
+		<h2>Motor Data</h2>
+        <div id="Motor0">Motor1: 0</div>
+        <div id="Motor1">Motor2: 0</div>
+        <div id="Motor2">Motor3: 0</div>
+        <div id="Motor3">Motor4: 0</div>
+        <div id="Motor4">Motor5: 0</div>
+        <div id="Motor5">Motor6: 0</div>	
+	</div>
+</div>
+
+<div id="sendingCommandMenu">
+	<div id="SendWP" >
+		Send WP:  <button onclick="sendcommand('sendWP',this);">Send Frame</button><br>
+	</div>
+	<div id="ReqWP" >
+		Request WP: <input type="text" value="0" name="WPIndex"><button onclick="sendcommand('reqWP',this);">Send Frame</button>
+	</div>
+	<div id="SerialTest" >
+		SerialTest: <input type="text" value="66" name="SerialNumber"><button onclick="sendcommand('serialTest',this);">Send Frame</button>
+	</div>
+	<div id="EngineTest" >
+		Engine Test: <input type="text" value="10" name="EngineSpeed"><button onclick="sendcommand('EngineTest',this);">Send Frame</button>
+	</div>
+</div>
+
+<div id=WP_Settings>  
+	<h2 style="margin-left:20px;">WP Settings</h2>    
+	
+		<label>Latitude</label><input type="text" value="510565210" id="WP_Set0"><br>
+		<label>Longitude</label><input  type="text" value="37011801" id="WP_Set1"><br>
+		<label>Altitude</label><input  type="text" value="250" id="WP_Set2"><br>
+		<label>Status</label><input  type="text" value="1" id="WP_Set3"><br>
+		<label>Heading</label><input  type="text" value="0" id="WP_Set4"><br>
+		<label>ToleranceRadius</label><input  type="text" value="0" id="WP_Set5"><br>
+		<label>HoldTime</label><input  type="text" value="2" id="WP_Set6"><br>
+		<label>Event_Flag</label><input  type="text" value="0" id="WP_Set7"><br>
+		<label>Index</label><input  type="text" value="1" id="WP_Set8"><br>
+		<label>Type</label><input  type="text" value="0" id="WP_Set9"><br>
+		<label>WP_EventChanneldata</label><input  type="text" value="100" id="WP_Set10"><br>
+		<label>AltitudeRate</label><input  type="text" value="30" id="WP_Set11"><br>
+		<label>Speed</label><input  type="text" value="30" id="WP_Set12"><br>
+		<label>CamAngle</label><input  type="text" value="0" id="WP_Set13"><br>
+		<label>Name</label><input  type="text" value="0" id="WP_Set14">
+	
+</div>
+	
+<div id="atmosphereMenu">
+	<div id="atmosphereTitle">Server Status:</div>
+	<div id="serverLink">Offline</div>
+    <div id="server_status">Offline</div>
+</div>
+
+
+</body>
+</html>

@@ -1,0 +1,1225 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset='utf-8'> 
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+<title>Coptermotion Map</title>
+<style type="text/css">
+	
+html { height: 100% }
+body { height: 100%; margin: 0; padding: 0; font:10px Verdana; color:#FFF; }
+ 
+#wrapper {
+position:relative;
+height:100%;
+width:100%;
+}
+
+#map_canvas {
+height: 100%;
+width: 100%;
+float:left;
+min-height:100%;
+}
+
+		 
+#OSDMenu {
+position:absolute;
+min-width: 800px;
+height:120px;
+left: 80px; 
+right:120px;
+top: 0%; 
+bottom: 0; 
+background-color:#FFFAFA;
+color:#000;
+opacity: 0.97;
+filter: alpha(opacity=80);
+padding-left:50px;
+-moz-box-shadow: 0 0 5px #888;
+-webkit-box-shadow: 0 0 5px#888;
+box-shadow: 0 0 5px #888;
+-webkit-border-bottom-right-radius: 4px;
+-moz-border-radius-bottomright: 4px;
+border-bottom-right-radius: 4px;
+-webkit-border-bottom-left-radius: 4px;
+-moz-border-radius-bottomleft: 4px;
+border-bottom-left-radius: 4px;
+}
+
+#OSDMenu p {
+	color: #999999;
+	font-style: normal;
+	font-variant: normal;
+	font-weight: bold;
+	font-size: 10px;
+	line-height: normal;
+	font-family: Arial;
+}
+	 
+#WPMenu {
+position:absolute;
+width: 200px;
+height:600px;
+right: 0;
+top: 130px; 
+bottom: 0; 
+background-color:#FFFAFA;
+color:#000;
+opacity: 0.97;
+filter: alpha(opacity=80);
+padding:10px;
+padding-top: 25px;
+-moz-box-shadow: 0 0 5px #888;
+-webkit-box-shadow: 0 0 5px#888;
+box-shadow: 0 0 5px #888;
+-webkit-border-top-left-radius: 4px;
+-webkit-border-bottom-left-radius: 4px;
+-moz-border-radius-topleft: 4px;
+-moz-border-radius-bottomleft: 4px;
+border-top-left-radius: 4px;
+border-bottom-left-radius: 4px;
+}
+
+		 
+#OSDMenu_hidden {
+position:absolute;
+min-width: 800px;
+height:15px;
+left: 80px; 
+right:120px;
+top: 0%; 
+bottom: 0; 
+background-color:#FFFAFA;
+color:#000;
+opacity: 0.97;
+filter: alpha(opacity=80);
+padding:10px;
+display:none;
+cursor:pointer;
+-moz-box-shadow: 0 0 5px #888;
+-webkit-box-shadow: 0 0 5px#888;
+box-shadow: 0 0 5px #888;
+-webkit-border-top-left-radius: 4px;
+-webkit-border-bottom-left-radius: 4px;
+-moz-border-radius-topleft: 4px;
+-moz-border-radius-bottomleft: 4px;
+border-top-left-radius: 4px;
+border-bottom-left-radius: 4px;
+}
+
+#OSDMenu_hidden p {
+	color: #999999;
+	font-style: normal;
+	font-variant: normal;
+	font-weight: bold;
+	font-size: 10px;
+	line-height: normal;
+	font-family: Arial;
+}
+	 
+#WPMenu_hidden {
+position:absolute;
+width: 45px;
+height:600px;
+right: 0;
+top: 130px; 
+bottom: 0; 
+background-color:#FFFAFA;
+color:#000;
+opacity: 0.97;
+filter: alpha(opacity=80);
+padding-left:10px;
+display:none;
+cursor:pointer;
+-moz-box-shadow: 0 0 5px #888;
+-webkit-box-shadow: 0 0 5px#888;
+box-shadow: 0 0 5px #888;
+-webkit-border-top-left-radius: 4px;
+-webkit-border-bottom-left-radius: 4px;
+-moz-border-radius-topleft: 4px;
+-moz-border-radius-bottomleft: 4px;
+border-top-left-radius: 4px;
+border-bottom-left-radius: 4px;
+}
+
+#WPMenu_hidden p {
+	color: #999999;
+	font-style: normal;
+	font-variant: normal;
+	font-weight: bold;
+	font-size: 10px;
+	line-height: normal;
+	font-family: Arial;
+	-webkit-transform: rotate(90deg);
+  -moz-transform: rotate(90deg);
+  -ms-transform: rotate(90deg);
+  -o-transform: rotate(90deg);
+  transform: rotate(90deg);
+
+  /* also accepts left, right, top, bottom coordinates; not required, but a good idea for styling */
+  -webkit-transform-origin: 50% 50%;
+  -moz-transform-origin: 50% 50%;
+  -ms-transform-origin: 50% 50%;
+  -o-transform-origin: 50% 50%;
+  transform-origin: 50% 50%;
+
+  /* Should be unset in IE9+ I think. */
+  filter: progid:DXImageTransform.Microsoft.BasicImage(rotation=3);
+}
+	
+
+#handleHor {
+cursor:pointer;
+width:10px;
+height:10px;
+font-size:20px;
+color:white;
+position:absolute;
+cursor:pointer;
+background-color:white;
+top: 0px;
+left: 0px;
+height: 30px;
+width: 100%;
+-webkit-border-top-left-radius: 4px;
+-moz-border-radius-topleft: 4px;
+border-top-left-radius: 4px;
+-moz-box-shadow: 0 0 5px #888;
+-webkit-box-shadow: 0 0 5px#888;
+box-shadow: 0 0 5px #888;
+}
+
+#handleHor p {
+margin-top: 2px;
+text-align:center;
+color: #999999;
+font-style: normal;
+font-variant: normal;
+font-weight: bold;
+font-size: 25px;
+line-height: normal;
+font-family: Arial;
+}
+
+#handleVert {
+font-size:20px;
+color:white;
+position:absolute;
+cursor:pointer;
+background-color:white;
+top: 0px;
+left: 0px;
+height: 100%;
+width: 36px;
+opacity: 1 !important;
+filter: alpha(opacity=100);
+-moz-box-shadow: 0 0 5px #888;
+-webkit-box-shadow: 0 0 5px#888;
+box-shadow: 0 0 5px #888;
+-webkit-border-bottom-left-radius: 4px;
+-moz-border-radius-bottomleft: 4px;
+border-bottom-left-radius: 4px;
+}
+
+#handleVert p {
+-webkit-transform: rotate(-90deg);
+  -moz-transform: rotate(-90deg);
+  -ms-transform: rotate(-90deg);
+  -o-transform: rotate(-90deg);
+  transform: rotate(-90deg);
+  -webkit-transform-origin: 44% 134%;
+  -moz-transform-origin: 44% 134%;
+  -ms-transform-origin: 44% 134%;
+  -o-transform-origin: 44% 134%;
+  transform-origin:44% 134%;
+	font-size:25px;
+  /* Should be unset in IE9+ I think. */
+  filter: progid:DXImageTransform.Microsoft.BasicImage(rotation=3);
+  width:100px;
+}
+
+#left{
+	float:left;
+	margin:0px;
+	margin-top:10px;
+}
+
+h2 {
+	margin-top:5px;
+	margin:5px;
+	padding:0px;
+}
+
+#right{
+	float:left;
+	margin-left:100px;
+	margin-top:10px;
+}
+
+#g1 {
+   width:100px; height:80px;
+   display: inline-block;
+   margin: 0px;
+   float:left;
+ }
+
+#g2 {
+   width:100px; height:80px;
+   display: inline-block;
+   margin: 0px;
+   float:left;
+ }
+
+#g3 {
+   width:100px; height:80px;
+   display: inline-block;
+   margin: 0px;
+   float:left;
+ }
+ 
+ #g4 {
+   width:100px; height:80px;
+   display: inline-block;
+   margin: 0px;
+   float:left;
+ }
+ 
+  #g5{
+   width:100px; height:80px;
+   display: inline-block;
+   margin: 0px;
+   float:left;
+ }
+ 
+  #g6{
+   width:100px; height:80px;
+   display: inline-block;
+   margin: 0px;
+   float:left;
+ }
+ 
+   #g7{
+   width:100px; height:80px;
+   display: inline-block;
+   margin: 0px;
+   float:left;
+ }
+ 
+   #g8{
+   width:100px; height:80px;
+   display: inline-block;
+   margin: 0px;
+   float:left;
+ }
+ 
+ #server_status {
+ 	position:absolute;	
+ 	height:10px;
+ 	width:500px;
+ 	top:95px;
+ }
+
+  #server_status p {
+ 	color:darkgreen;
+ 	float:left;
+ 	margin-left:10px;
+ }
+
+#serverLink p, #serialLink p, #FCStatusFlags p{
+	margin:0px;
+	margin-top: 5px;
+	margin-left:10px;
+}
+
+.wplist, wplist:visited{
+	margin-top:3px;
+	min-width: 30px;
+
+}
+
+.wplist:hover, .wplist:active {
+	background-color:#969696;
+}
+
+#markerWindow{
+	color:black;
+}
+
+#DrawingMenu {	
+	bottom: 7px;
+	left: 35%;
+	border-color: rgb(99,105,16);
+	-moz-box-shadow: 0 0 5px #888;
+	-webkit-box-shadow: 0 0 5px#888;
+	box-shadow: 0 0 5px #888;
+	position: absolute;
+	height: 25px;
+	width: 300px;
+	background-color: white;
+	color:darkred;
+	text-align: center;
+	visibility:hidden;
+}
+
+
+#DrawingMenu p {
+	margin:0px;
+	padding:0px;
+}
+
+#DrawingMenuButtons {	
+	bottom: 7px;
+	left: 60%;
+	border-color: rgb(99,105,16);
+	-moz-box-shadow: 0 0 5px #888;
+	-webkit-box-shadow: 0 0 5px#888;
+	box-shadow: 0 0 5px #888;
+	position: absolute;
+	height: 25px;
+	width: 80px;
+	background-color: white;
+	color:darkred;
+	text-align: center;
+	visibility:hidden;
+}
+
+
+#DrawingMenuButtons p {	
+	margin:0px;
+	padding:0px;
+}
+
+#DrawingSettings {
+border-color: rgb(99,105,16);
+	-moz-box-shadow: 0 0 5px #888;
+	-webkit-box-shadow: 0 0 5px#888;
+	box-shadow: 0 0 5px #888;
+	position:absolute;
+	height:300px;
+	width:600px;
+	top:200px;
+	left:300px;
+	color:black;
+	background-color:white;
+	padding: 10px;
+	visibility:hidden;
+}
+
+#hideButton {
+	top:20px;
+	right:20px;
+	position:absolute;
+	clear:both;
+	padding: 14px 24px;
+	font-size: 16px;
+	width: 64px;
+	font-weight: 200;
+	color: #fff;
+	border: 0;
+	color: #ffffff;
+	text-shadow: 0 -1px 0 rgba(0, 0, 0, 0.25);
+	background: #ff0000;
+	background: -moz-linear-gradient(top, #ff0000 0%, #8b0000 100%);
+	background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,#ff0000), color-stop(100%,#8b0000));
+	background: -webkit-linear-gradient(top, #ff0000 0%,#8b0000 100%);
+	background: -o-linear-gradient(top, #ff0000 0%,#8b0000 100%);
+	background: -ms-linear-gradient(top, #ff0000 0%,#8b0000 100%);
+	background: linear-gradient(to bottom, #ff0000 0%,#8b0000 100%);
+	background-repeat: repeat-x;
+	border-color: #0044cc #0044cc #002a80;
+	border-color: rgba(0, 0, 0, 0.1) rgba(0, 0, 0, 0.1) rgba(0, 0, 0, 0.25);
+	-webkit-border-radius: 6px;
+	-moz-border-radius: 6px;
+	border-radius: 6px;
+	-webkit-box-shadow: inset 0 1px 0 rgba(255,255,255,.1), 0 1px 5px rgba(0,0,0,.25);
+	-moz-box-shadow: inset 0 1px 0 rgba(255,255,255,.1), 0 1px 5px rgba(0,0,0,.25);
+	box-shadow: inset 0 1px 0 rgba(255,255,255,.1), 0 1px 5px rgba(0,0,0,.25);
+}
+
+#waypoint_list {
+overflow: scroll;
+height: 350px;
+}
+
+
+</style>
+<script type="text/javascript" src="jquery/jquery-1.7.2.js"></script>
+<script type="text/javascript" src="jquery/jquery.atmosphere.js"></script>
+<script type="text/javascript" src="jquery/application.js"></script>
+<script src="jquery/raphael.2.1.0.min.js"></script>
+<script src="jquery/justgage.1.0.1.min.js"></script>
+<script type="text/javascript"
+  src="http://maps.googleapis.com/maps/api/js?key=AIzaSyDbYw3BJL2Qp-GFS04fHAc_CYBaS59ks8A&sensor=false&libraries=drawing,geometry">
+</script>
+<script type="text/javascript"
+   src="GenerateMappingWaypoints.js">
+</script>
+<script type="text/javascript"
+  src="rotation.js">
+</script>
+
+<script type="text/javascript">
+	
+	/** TODO 
+		-export to kml & import to kml (save & load)
+		-send WP - recieve WP
+		-syncing problem: show color different color when unsynced + when OSD data #WP in memory is not consistent resend all data
+		-delete WP
+		-elevation
+		-transition on menu's
+		-when closing OSD menu have status flags remain
+		-only show removePath button after first click
+		-wpArray not done for mapping (inside rotation.js)
+	**/
+	
+	var coord;
+	var OSDMenuVis = true;
+	var WPMenuVis = true;
+	var markersArray = new Array();
+	var wpArray = new Array();
+	var selectedShape;
+	var numberOfShapes;
+	var poly;
+	var map;
+	var infowindow;
+	var path;
+	var resultDegrees;
+	var lineCoordinates = new Array();
+	var line;
+	var prevShape = {
+		start : 0,
+		end : 0
+	};
+	
+	function toggle(target){
+		switch (target){
+			case "OSDMenu":
+				if (OSDMenuVis == true){
+					document.getElementById("OSDMenu").style.display = 'none';
+					document.getElementById("OSDMenu_hidden").style.display = 'block';
+					OSDMenuVis = false;
+				} else {
+					document.getElementById("OSDMenu").style.display = 'block';
+					document.getElementById("OSDMenu_hidden").style.display = 'none';
+					OSDMenuVis = true;
+				}
+				break;
+			case "WPMenu":
+				if (WPMenuVis == true){
+					document.getElementById("WPMenu").style.display = 'none';
+					document.getElementById("WPMenu_hidden").style.display = 'block';
+					WPMenuVis = false;
+				} else {
+					document.getElementById("WPMenu").style.display = 'block';
+					document.getElementById("WPMenu_hidden").style.display = 'none';
+					WPMenuVis = true;
+				}
+				break;
+		}
+		
+	}
+
+     
+     function update_list(){
+    	 //take our list container; loop over our list
+    	 var temp = "";
+    	 for (var i=0; i<markersArray.length; i++){
+    		 //markersArray[i].position.lat()
+    		 temp +="<div onmouseover='showMouseMarker(this)' onmouseout='clearMouseMarker(this)' class='wplist' id=wp_"+i+">WP_"+i+"</div>"
+    	 }
+    	 document.getElementById("waypoint_list").innerHTML = temp;
+    	 //console.log(markersArray);
+    	 console.log(wpArray);
+     }
+     
+     function removeAllWP(){
+    	 path.clear();
+    	 if (polygon != "undefined"){
+    		 polygon.setMap(null); //remove polygon
+    		 line.setMap(null); //remove direction line
+    	 }
+    	 
+    	 wpArray = [];
+    	 //call's remove_at for every point in path
+    	 
+    	document.getElementById("DrawingMenu").style.visibility = "hidden";
+    	document.getElementById("DrawingSettings").style.visibility = "hidden";	
+    	document.getElementById("DrawingMenuButtons").style.visibility = "hidden";
+     }
+     
+     function showMouseMarker(div){
+    	//get the ID
+    	var l = div.id.length;
+    	var id = div.id.substring(3,l);
+   
+    	var icon ='markerIcons/largeTDGreenIcons/marker'+id+'.png';
+		markersArray[id].setIcon(icon);
+	
+		//show info window	
+		var content = 	"<div id='markerWindow'>"+
+		"<h2>WP"+id+"</h2>"+
+		"<p><label>Latitude </label><input type='text' value='"+markersArray[id].position.lat()+"' id='lat' /></p>"+
+		"<p><label>Longitude </label><input type='text' value='"+markersArray[id].position.lng()+"' id='long' /></p>"+
+		"</div>"
+		
+		infowindow.setContent(content);
+		infowindow.open(map,markersArray[id]);	
+		
+     }
+     
+     function clearMouseMarker(div) {
+    	 var l = div.id.length;
+    	 var id = div.id.substring(3,l);
+    	 var icon ='markerIcons/largeTDRedIcons/marker'+id+'.png';
+ 		 markersArray[id].setIcon(icon);
+ 		infowindow.close();
+     }
+     
+    function init_gauge(){  	 
+    	 var g1 = new JustGage({
+ 	        id: "g1", 
+ 	        value: getRandomInt(0, 30), 
+ 	        min: 0,
+ 	        max: 50,
+ 	        title: "Vertical Speed",
+ 	        label: "m/s"
+ 	     });
+ 	     
+ 	     var g2 = new JustGage({
+ 		        id: "g2", 
+ 		        value: getRandomInt(0, 30), 
+ 		        min: 0,
+ 		        max: 50,
+ 		        title: "Ground Speed",
+ 		        label: "m/s"
+ 		     });
+ 	     
+ 	     var g3 = new JustGage({
+ 		        id: "g3", 
+ 		        value: getRandomInt(0, 100), 
+ 		        min: 0,
+ 		        max: 250,
+ 		        title: "Altitude",
+ 		        label: "m"
+ 		     });
+ 	     
+ 	     var g4 = new JustGage({
+ 		        id: "g4", 
+ 		        value: getRandomInt(0, 180), 
+ 		        min: 0,
+ 		        max: 180,
+ 		        title: "Heading",
+ 		        label: "deg"
+ 		     });
+ 	    
+ 	     
+ 	     var g6 = new JustGage({
+ 		        id: "g6", 
+ 		        value: getRandomInt(0, 3500), 
+ 		        min: 0,
+ 		        max: 3500,
+ 		        title: "Used Capacity",
+ 		        label: "mAh"
+ 		     });
+ 	     
+ 	     var g6 = new JustGage({
+ 		        id: "g7", 
+ 		        value: getRandomInt(0, 20), 
+ 		        min: 0,
+ 		        max: 20,
+ 		        title: "# GPS Sats ",
+ 		        label: "sat"
+ 		     });  
+     }
+    
+    function photoSizeCalc(){
+		console.log("Calculating photo size");
+		var sensor = copter_param.elements["sensor"].value;
+		var sensorH=0,sensorW = 0;
+		var focal =copter_param.elements["focal"].value;
+		var alt = copter_param.elements["altitude"].value;
+		
+		switch (sensor)
+		{	case 'ff':
+			sensorW = 24, sensorH = 36;
+			break;
+			
+			case 'apsc-1.5':
+			sensorW = 22.2, sensorH = 14.8;
+			break;
+			
+			case 'apsc-1.6':
+			sensorW = 23.6, sensorH = 15.7;
+			break;
+			
+			case 'nikon1/CX':
+			sensorW = 13.2, sensorH = 8.8;
+			break;
+			
+			case 'fourthirds':
+			sensorW = 17.3, sensorH = 13;
+			break;
+		}
+
+		
+		var photoH = parseInt(((alt*sensorH)/focal)); 
+		var photoW = parseInt(((alt*sensorW)/focal)); 
+		
+		console.log("New photo size (X/Y): "+photoW+"/"+photoH);
+		
+		photo_size = {'X' : photoW, 'Y' : photoH };
+		copter_param.elements["sizeX"].value = photoW;
+		copter_param.elements["sizeY"].value = photoH;
+	}
+     
+	function initialize() {
+			init_gauge();
+			
+			coord = new google.maps.LatLng(51.07664272289166,3.676195442676544);
+			mapOptions = { 
+				zoom: 17, 
+				center: coord , 
+				panControl: true,
+				panControlOptions: {
+				  position: google.maps.ControlPosition.LEFT_CENTER
+				},
+				zoomControl: true,
+				zoomControlOptions: {
+				  style: google.maps.ZoomControlStyle.LARGE,
+				  position: google.maps.ControlPosition.LEFT_CENTER
+				},
+				mapTypeControl: true,
+				mapTypeControlOptions: {
+					position: google.maps.ControlPosition.RIGHT_BOTTOM},
+				scaleControl: false,
+				streetViewControl: true,
+				streetViewControlOptions: {position: google.maps.ControlPosition.RIGHT_TOP},
+				overviewMapControl: false,	
+				mapTypeId: google.maps.MapTypeId.ROADMAP
+			};
+			map = new google.maps.Map(document.getElementById('map_canvas'), mapOptions);
+			
+			var managerOptions = {
+					drawingControl: true,
+					drawingControlOptions: {
+		    			position: google.maps.ControlPosition.BOTTOM_CENTER,
+		    			drawingModes: [google.maps.drawing.OverlayType.POLYGON]
+		  			},
+					polygonOptions: {
+						//blue #1E90FF, red #FF1493, green #32CD32, orange #FF8C00, purple #4B0082
+						//auto change http://www.geocodezip.com/v3_GoogleEx_DrawingTools_deleteAll.html
+						fillColor:"#1E90FF",
+						strokeColor:"#1E90FF",
+						editable:true
+					}
+			}
+				
+			var drawingManager = new google.maps.drawing.DrawingManager(managerOptions);
+			drawingManager.setMap(map);	
+				
+				
+			var polyOptions = {
+				fillColor:"#1E90FF",
+				strokeColor:"#1E90FF",
+				editable:true,
+				icons:[{
+					icon: {
+						path:google.maps.SymbolPath.FORWARD_CLOSED_ARROW,
+					},
+					repeat:'200px',
+				}]
+			}
+			
+			poly = new google.maps.Polyline(polyOptions);
+			poly.setMap(map);
+
+			google.maps.event.addListener(map, 'click', addLatLng);
+			path = poly.getPath();
+			
+			infowindow = new google.maps.InfoWindow();
+			 
+			function addLatLng(event) {
+			
+				var icon ='markerIcons/largeTDRedIcons/marker'+markersArray.length+'.png';
+				path = poly.getPath();
+				
+				// Because path is an MVCArray, we can simply append a new coordinate
+				// and it will automatically appear
+				path.push(event.latLng);
+			
+				// Add a new marker at the new plotted point on the polyline.
+				var marker = new google.maps.Marker({
+					position: event.latLng,
+					title: '#' + path.getLength(),
+					map: map,
+					dragable: false,
+					clickable: true,
+					name: name,
+					raiseOnDrag: false,
+					icon: icon,
+					setZIndex: 20
+				});
+				
+				var content = 	"<div id='markerWindow'>"+
+				"<h2>WP"+(path.getLength()-1)+"</h2>"+
+				"<p><label>Latitude </label><input type='text' value='"+event.latLng.lat()+"' id='lat' /></p>"+
+				"<p><label>Longitude </label><input type='text' value='"+event.latLng.lng()+"' id='long' /></p>"+
+				"</div>"
+				
+				//Do we need closure?
+				google.maps.event.addListener(marker, 'click', function(){
+					infowindow.setContent(content);
+					infowindow.open(map,marker);
+					
+				});
+				
+				markersArray.push(marker);
+			
+				//fill the wp with standard values
+				var position = ({
+					"Latitude" : event.latLng.lat(),
+					"Longitude" : event.latLng.lng(),
+					"Altitude" : 200, //20m
+					"Status" : 1 		
+				});
+				
+            	var wp = ({
+            		"Position" : position,
+            		"Heading" :0 ,
+            		"ToleranceRadius" :10,
+            		"HoldTime" : 10,
+            		"Event_Flag" : 1,
+            		"Index" : (path.getLength()-1),
+            		"Type" : 0,              	
+            		"WP_EventChanneldata" : 100,
+            		"AltitudeRate" : 10,
+            		"Speed" : 100, //1m
+            		"CamAngle" : 0,
+            		"Name" :  0		
+            	});
+				
+            	//coming home werkt niet meer
+				wpArray.push(wp);
+				update_list();				
+			}
+			
+			//This event is fired when setAt() is called. The event passes the index that was passed to setAt() and the element that was previously in the array at that index.
+			google.maps.event.addListener(path, 'set_at', function(index,oldWP) {					
+				//called when editing the path
+				//we need to remove the (current) marker and add a new one at the position
+			
+				//remove old marker
+				markersArray[index].setMap(null);
+				
+				//set icon
+				var icon ='markerIcons/largeTDRedIcons/marker'+index+'.png';
+							
+				//make new marker
+				var marker = new google.maps.Marker({
+					position: path.getAt(index),
+					title: '#' + (index+1),
+					map: map,
+					dragable: false,
+					clickable: true,
+					//name: name,
+					raiseOnDrag: false,
+					icon: icon,
+					setZIndex: 20
+				});
+			
+				//edit marker in markersArray
+				markersArray[index] = marker;
+				
+				wpArray[index].Position.Latitude = path.getAt(index).lat();
+				wpArray[index].Position.Longitude = path.getAt(index).lng();
+				
+				//update WP list
+				update_list();	
+			});
+				
+			google.maps.event.addListener(path, 'insert_at', function(index) {
+				//when insert happens not at the end of the path but somewhere in the middle
+				//We need to completely rerender all makers 
+				if (index != (path.length-1)){
+					//called when adding a point to the path
+					var backup = wpArray;
+					
+					for (var i=0; i<markersArray.length;i++){
+						markersArray[i].setMap(null);
+					}
+
+					//empty array
+					markersArray = [];
+					wpArray = [];
+					var j=0;
+					for (var i=0; i<path.length; i++){
+						var icon ='markerIcons/largeTDRedIcons/marker'+i+'.png';
+						// Add a new marker at the new plotted point on the polyline.
+						var marker = new google.maps.Marker({
+							position: path.getAt(i),
+							title: '#' + (i+1),
+							map: map,
+							dragable: false,
+							clickable: true,
+							name: name,
+							raiseOnDrag: false,
+							icon: icon,
+							setZIndex: 20
+						});
+						
+						markersArray.push(marker); //add marker to array
+						
+						//test this
+						if (i==index){
+							//fill the wp with standard values
+							var position = ({
+								"Latitude" : path.getAt(i).lat(),
+								"Longitude" : path.getAt(i).lng(),
+								"Altitude" : 50,
+								"Status" : 1 		
+							});
+							
+			            	var wp = ({
+			            		"Position" : position,
+			            		"Heading" :0 ,
+			            		"ToleranceRadius" :10,
+			            		"HoldTime" : 2,
+			            		"Event_Flag" : 1,
+			            		"Index" : (path.getLength()-1),
+			            		"Type" : 0,              	
+			            		"WP_EventChanneldata" : 100,
+			            		"AltitudeRate" : 30,
+			            		"Speed" : 30,
+			            		"CamAngle" : 0,
+			            		"Name" :  0		
+			            	});
+							
+							wpArray.push(wp);
+						} else {
+							wpArray.push(backup[j]);
+							j++;
+						}
+						
+					
+						
+					}
+					
+					//update WP list
+					update_list();						
+				}					
+			});
+			
+			google.maps.event.addListener(path, 'remove_at', function(index,oldWP) {	
+				markersArray[index].setMap(null);
+				markersArray.splice(index,1);
+				wpArray.splice(index,1);
+				update_list();
+			});
+			
+			google.maps.event.addListener(drawingManager, 'overlaycomplete', function(e) {
+				 drawingManager.setDrawingMode(null);
+				 selectedShape = e.overlay; 
+						
+				 if (e.type == "polygon"){	
+					polygon = e.overlay;
+					google.maps.event.addListener(selectedShape.getPath(), 'set_at', (function(path) {
+						return function(){
+							console.log("Creating a new path (set)");
+							if (resultDegrees != undefined){
+								generateWaypointsAtAngle(resultDegrees,polygon);
+							}	
+						}
+						
+					})(polygon));
+					
+				
+					google.maps.event.addListener(selectedShape.getPath(), 'insert_at', (function(path) {
+						return function(){
+							console.log("Creating a new path (insert_at)");
+							if (resultDegrees != undefined){
+								generateWaypointsAtAngle(resultDegrees,polygon);
+							}	
+						}
+						
+					})(polygon));
+				 }
+			});
+				
+		
+			google.maps.event.addListener(drawingManager, 'polygoncomplete', function(circle) {
+				
+				console.log("You finished drawing the polygon. Please draw a direction.");
+				drawingManager.setDrawingMode(google.maps.drawing.OverlayType.POLYLINE);
+				
+				var lineSymbol = {
+					path: google.maps.SymbolPath.FORWARD_CLOSED_ARROW,
+					scale:6,
+					strokeOpacity:0.5
+				};
+				
+				//CHANGE COLOR + DRAWING CONTROL OF
+				drawingManager.setOptions({
+				
+					polylineOptions: {
+						strokeColor:"#FF273A",
+						strokeWeight:10,
+						clickable:false,
+						path: google.maps.SymbolPath.FORWARD_CLOSED_ARROW,
+						scale:6,
+						map:map,
+						strokeOpacity:0.5,
+						icons: [{
+							icon: lineSymbol,
+							offset: '100%',
+						}],
+					},
+					
+					drawingControl:false
+				});
+	
+
+				//AFTER BEARING SET DRAWING CONTROL BACK ON
+				google.maps.event.addListener(drawingManager, 'polylinecomplete', function(e) {
+					
+					console.log("You finished drawing the polyline");
+					
+					drawingManager.setDrawingMode(null);
+					
+					drawingManager.setOptions({
+						drawingControl:true
+					});
+
+					var lineCoord = e.latLngs.getAt(0);
+					resultDegrees = bearing(lineCoord.getAt(0),lineCoord.getAt(1));
+					console.log("angle: "+resultDegrees);
+					
+					generateWaypointsAtAngle(resultDegrees,polygon);
+					 			
+					line = e;
+	
+				});
+				
+			});
+			
+			google.maps.event.addListener(drawingManager, 'drawingmode_changed',  function() {
+			
+				if (drawingManager.drawingMode == "polygon"){
+					drawingManager.setOptions({
+						drawingControl:false
+					});
+					
+					document.getElementById("DrawingSettings").style.visibility = "visible";			
+					document.getElementById("DrawingMenu").style.visibility = "visible";
+					document.getElementById("DrawingMenuButtons").style.visibility = "visible";
+					DrawingSettingsState = true;
+					
+					document.onkeydown = function(e) {
+					    e = e || window.event;
+					    if (e.keyCode == 27) {
+					    	drawingManager.setOptions({
+								drawingControl:true
+							});
+					    	drawingManager.setDrawingMode(null);
+					    	document.getElementById("DrawingMenu").style.visibility = "hidden";
+					    	document.getElementById("DrawingSettings").style.visibility = "hidden";	
+					    	document.getElementById("DrawingMenuButtons").style.visibility = "hidden";
+					    	DrawingSettingsState = false;
+					    }
+					};
+					
+					//hide drawing manager menu
+					//show window with settings (overlap; photo_size,...) this window can be closed immediatly; it than replaces the drawing manager menu
+					
+					//on polygon complete -> call calcu WP 
+					//show some instructions to guide the steps
+					//on calcu WP complete hide menu
+					
+					//then also how about working togehter with rest of program?
+					//need to also add all the points to path & list.
+					//maybe as extra feature have start en end points for interracting with freestyle
+					
+					//extra: have an edit button somewhere ? how to combine menu with altitude menu ?
+							
+				}	
+			});
+			
+			
+			photoSizeCalc();
+	
+	}
+	
+	var DrawingSettingsState = false;
+	function toggleDrawingSettings(){
+		if (DrawingSettingsState == true){
+			document.getElementById("DrawingSettings").style.visibility = "hidden";
+		} else {
+			document.getElementById("DrawingSettings").style.visibility = "visible";
+		}
+		
+	}
+	
+	//polySides  =  how many corners the polygon has
+	//polyX    =  horizontal coordinates of corners
+	//polyY    =  vertical coordinates of corners
+	//point      =  point to be tested
+	function pointInPolygon(polySides,polyX,polyY,point){
+		var res=new Boolean();
+		res = false;
+		var y = point.lat();
+		var x = point.lng();
+	
+		var i=0,j=polySides-1;
+		
+		for (i=0; i<polySides; i++) {
+			if (polyY[i]<y && polyY[j]>=y ||  polyY[j]<y && polyY[i]>=y) {
+				
+				if (polyX[i]+(y-polyY[i])/(polyY[j]-polyY[i])*(polyX[j]-polyX[i])<x) {
+					
+					res=!res; 
+				}
+			}
+			
+			j=i; 
+		}
+		return res;
+	}
+	
+	//outside of jquery
+	function sendMultWP(){
+		for (var i=0; i<wpArray.length; i++){
+			//at moment no other data than coord are in markersArray
+			console.log("<sending command> sendWP");
+			subSocket.push(jQuery.stringifyJSON({ type: "sendWP", data: wpArray[i], source:"client" }));
+			document.getElementById("SendWP").innerHTML = "Send WP: <div id=\"red\">Waiting for ACK...</div>";
+		}
+	}
+
+    
+	
+    </script>
+  </head>
+  <body onload="initialize()">
+  <div id="wrapper">
+  	<div id="map_canvas"></div>
+  		<div id="OSDMenu">
+  			<div id="handleVert" onclick="toggle('OSDMenu')"><p>» OSD</p></div>
+  			<div id="left"><h2></h2>
+  				
+  				<div id="g1"></div>
+  				<div id="g2"></div>
+  				<div id="g3"></div>
+  				<div id="g4"></div>
+  				
+  			</div>
+  			
+  			<div id="right"><h2></h2>
+  				<div style="float:left">
+  				
+  				<p style="
+				    margin: 0px;
+				    margin-top: 6px;">Flying Time</p>
+				    
+				<p style="
+				    font-size: 40px;
+				    margin: 0px;
+				    margin-top: 5px;
+				    color: black;">50</p>
+				
+				<p style="
+				    margin: 0px;
+				    margin-left: 20px;
+				    font-weight: 100;
+				    margin-top: -6px;">s</p></div>
+
+  				<div id="g6"></div>				
+  				<div id="g7"></div>
+  			</div>
+  			
+  			<div id="server_status">
+  				<div id="FCStatusFlags">
+  					<p>FC Status Flags</p>
+  				</div>
+  				<div id="serialLink" >
+  					<p>Serial Link</p>
+  				</div>
+  				<div id="serverLink">
+  					<p>Connected to Server</p>
+  				</div>
+  			</div>
+ 	
+  		</div>
+  		<div id="OSDMenu_hidden" onclick="toggle('OSDMenu')">
+  			<p>SHOW OSD MENU</p>
+  		</div>
+	  	<div id="WPMenu">	
+	  		<div id="handleHor" onclick="toggle('WPMenu')"><p>» WAYPOINT LIST</p></div>
+	   	 	<br><br>
+	    	<div id="waypoint_list"></div>	
+	    	
+	    	
+	    	<br></br>
+	    	<div onclick="removeAllWP();" style="color:red">Remove All</div>
+	    	
+	    	<br><br>
+	    	<div id="SendWP" onclick="sendcommand('sendWPlist')">SEND</div>
+	    	<div>RECIEVE</div>
+	    	
+	    	<br><br>
+	    	<div>EXPORT TO WPL</div>
+	    	<div>IMPORT FROM WPL</div>
+	    	
+  		</div>
+  		<div id="WPMenu_hidden" onclick="toggle('WPMenu')">	
+	    	<p>SHOW WAYPOINT MENU</p>
+  		</div>
+  		<div id="DrawingSettings">
+  			<h2>Mapping Settings</h2>
+    		<p>You can fill in settings before & after drawing the polygon.</p>
+    		<p>This menu can be accessed by clicking the settings button below.</p>
+		    <form name="copter_param" action="" method="get">
+		
+		    	<div id="left">
+			        <p><label>Fixed Altitude (m):</label></p>  <input type="text" name="altitude" value="80" onChange="photoSizeCalc()" /><br />
+			        <p><label>Sensor Type</label>
+			            <select id="sensor" name="sensor" onChange="photoSizeCalc()">
+			              <option selected value="ff">*Full Frame* (ex: 1Ds,5D,D3,D800,D700,D600)</option>
+			              <option value="apsc-1.5">*APS-C* 1,6x - Nikon (ex: D7000,D5100,D3200)</option>
+			              <option value="apsc-1.6">*APS-C* 1,5x - Canon (ex: 7D,60D)</option>
+			              <option value="fourthirds">*4/3* 2x -Olympus,Fuji</option>
+			            </select>
+					</p>
+			        
+			        <p><label>Lens focal length</label>
+			            <select id="focal" name="focal" onChange="photoSizeCalc()">
+			              <option value="24">24mm</option>
+			              <option value="28">28mm</option>
+			              <option value="35">35mm</option>
+			              <option selected value="50">50mm</option>
+			              <option value="85">85mm</option>
+			            </select>
+					</p>   
+			        
+			        <p>Photo size is calculated based on <b> sensor size</b>, <b>focal length</b> and <b>altitude</b></p>
+			        
+			        <p><label>Photo size[X/Y] (m):</label></p> 	<input style="width: 30px;"type="text" name="sizeX" />
+			        											<input style="width: 30px;"  type="text" name="sizeY" /><br /><br><br>
+			   </div>		
+				   <div id="right">                                                
+			        <p><label>Overlap (%):</label></p> <input type="text" value="20" name="overlap" /><br />
+			        <p><label>Climb Rate (0.1 m/s):</label></p> <input type="text" value="28" name="climb" /><br />
+			        <p><label>Delay Time (s):</label></p> <input type="text" value="1" name="delay" /><br />
+			        <p><label>Speed (0.1 m/s):</label></p> <input type="text" value="50" name="speed" /><br><br>		        
+		       </div> 
+		       
+		       <div id="hideButton" onclick="toggleDrawingSettings()"> HIDE</div>
+		      
+			</form>
+  		
+  		</div>
+  		<div id="DrawingMenu"><p>Click to add new point to polygon. Double-click to close</p><p> Press ESC to exit planner mode.</p></div>
+  		<div id="DrawingMenuButtons"><p onclick='toggleDrawingSettings()'>SHOW</p><p>CLOSE</p></div>
+  		
+  </div>
+  </body>
+</html>
