@@ -7,7 +7,7 @@
   <version>1.0</version>
   <name>MK Web Interface</name>
   <build>
-    <finalName>chat_test</finalName>
+    <finalName>MK_WEB_INTERFACE</finalName>
   </build>
   
   <dependencies>
