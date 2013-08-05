@@ -1,6 +1,6 @@
 package org.atmosphere.datatypes;
 
-import org.atmosphere.coptermotion.DataStorage;
+import coptermotion.DataStorage;
 
 import java.util.LinkedList;
 
