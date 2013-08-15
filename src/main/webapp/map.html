@@ -673,10 +673,11 @@ height: 350px;
 		copter_param.elements["sizeY"].value = photoH;
 	}
      
+    var currentPos; 
 	function initialize() {
 			init_gauge();
 			
-			coord = new google.maps.LatLng(51.07664272289166,3.676195442676544);
+			coord = new google.maps.LatLng(51.054013663835676,3.7215113639831543);
 			mapOptions = { 
 				zoom: 17, 
 				center: coord , 
@@ -738,6 +739,28 @@ height: 350px;
 			path = poly.getPath();
 			
 			infowindow = new google.maps.InfoWindow();
+			
+	
+			//add currentPos marker
+			currentPos = new google.maps.Marker({
+			     position: new google.maps.LatLng(0,0),
+			     map: map,
+			     title:"Current Position!"
+			 });
+			
+			//add targetPos marker
+			targetPos = new google.maps.Marker({
+			     position: new google.maps.LatLng(0,0),
+			     map: map,
+			     title:"Target Position!"
+			 });
+			
+			//add homePos marker
+			homePos = new google.maps.Marker({
+			     position: new google.maps.LatLng(0,0),
+			     map: map,
+			     title:"Home Position!"
+			 });
 			 
 			function addLatLng(event) {
 			
@@ -1155,6 +1178,9 @@ height: 350px;
 	  	<div id="WPMenu">	
 	  		<div id="handleHor" onclick="toggle('WPMenu')"><p>» WAYPOINT LIST</p></div>
 	   	 	<br><br>
+	   	 	<div onclick="test()">
+	   	 	<p>TEST Mapping</p>
+	   	 	</div>
 	    	<div id="waypoint_list"></div>	
 	    	
 	    	

@@ -304,7 +304,17 @@ function MeterstoGPS(Meters_position)
       'lat'  : Number(Bottom_Left.lat, 10) + (Number(Meters_position.Y, 10)/Number(map_size.Y, 10)) * Number(Top_Right.lat - Bottom_Left.lat, 10)
    }
    ;
-   return GPS_pos;
+   
+   var _BL = new google.maps.LatLng(Bottom_Left.lat,Bottom_Left.lng);
+
+   test = {
+		   'lng':google.maps.geometry.spherical.computeOffset(_BL,Meters_position.X,90).lng(),
+		   'lat':google.maps.geometry.spherical.computeOffset(_BL,Meters_position.Y,0).lat()
+   };
+ 
+   console.log(GPS_pos);
+   console.log(test);
+   return test;
 }
 
 // Distance between 2 GPS positions
@@ -345,7 +355,27 @@ function GPStoMeters(GPS_position){
       'X' : Distance(temp_point1, Bottom_Left), 'Y' : Distance(temp_point2 , Bottom_Left)
    }
    ;
+   /**
+   var tmp1 = new google.maps.Marker({
+		position: new google.maps.LatLng(temp_point1.lat,temp_point1.lng),
+		map: map,
+		dragable: false,
+		clickable: true,
+		name: "p1",
+		raiseOnDrag: false,
+		setZIndex: 20
+	});
 	
+   var tmp2 = new google.maps.Marker({
+		position: new google.maps.LatLng(temp_point2.lat,temp_point2.lng),
+		map: map,
+		dragable: false,
+		clickable: true,
+		name: "p2",
+		raiseOnDrag: false,
+		setZIndex: 20
+	});
+	**/
 	return Meter_position;
 	
 	
@@ -357,32 +387,32 @@ function Findcorners(centerpoint,photosize)
 	corner = new Array();
 	corner_gps = new Array();
 	
-	centerpoint_meter = GPStoMeters(centerpoint);	
+	centerpoint_meter = GPStoMeters(centerpoint);
 	
 	corner.push(
 	{
-		X:  centerpoint_meter.X-photosize.X, Y : centerpoint_meter.Y-photosize.Y
+		X:  parseInt(centerpoint_meter.X)-parseInt(photosize.X)/2, Y : parseInt(centerpoint_meter.Y)-parseInt(photosize.Y)/2
 		}
 	);
 	
 	corner.push(
 	{
-		X:  centerpoint_meter.X+photosize.X, Y : centerpoint_meter.Y-photosize.Y
-		}
-	);
+		X:  parseInt(centerpoint_meter.X)+parseInt(photosize.X)/2, Y : parseInt(centerpoint_meter.Y)-parseInt(photosize.Y)/2
+	});
 	
 	corner.push(
 	{
-		X:  centerpoint_meter.X+photosize.X, Y : centerpoint_meter.Y+photosize.Y
+		X:  parseInt(centerpoint_meter.X)+parseInt(photosize.X)/2, Y : parseInt(centerpoint_meter.Y)+parseInt(photosize.Y)/2
 		}
 	);
 
 	corner.push(
 	{
-		X:  centerpoint_meter.X-photosize.X, Y : centerpoint_meter.Y+photosize.Y
+		X:  parseInt(centerpoint_meter.X)-parseInt(photosize.X)/2, Y : parseInt(centerpoint_meter.Y)+parseInt(photosize.Y)/2
 		}
 	);
 	
+	console.log(corner);
 	
 	for (var i=0; i<4;i++)
 	{

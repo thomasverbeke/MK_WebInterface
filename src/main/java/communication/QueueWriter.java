@@ -19,6 +19,11 @@ public class QueueWriter extends SerialWriter implements Runnable {
 	public QueueWriter(OutputStream writer, ServletContextEvent event) {
 		super(writer);
 		writeQueue = (BlockingQueue<ArrayList>) event.getServletContext().getAttribute("writeQueue");
+		
+		//start OSD data req
+		_OSDDataInterval(50);
+		//test the timer
+		//startSubscriptionService();
 	}
 	
 	@Override

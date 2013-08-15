@@ -158,7 +158,27 @@ $(function () {
             	document.getElementById("OSD21").innerHTML = "UsedCapacity: " + OSD.UsedCapacity;
             	document.getElementById("OSD22").innerHTML = "Version: " + OSD.version;
             	
-            	
+            	//update the currentPosition on the map
+				currentPos = new google.maps.Marker({
+					position: new google.maps.LatLng(OSD.currentPosition.Latitude,OSD.currentPosition.Longitude),
+					map: map,
+					title:"Current Position!"
+				});
+				
+				//update the targetPosition on the map
+				targetPos = new google.maps.Marker({
+					position: new google.maps.LatLng(OSD.targetPosition.Latitude,OSD.targetPosition.Longitude),
+					map: map,
+					title:"Target Position!"
+				});
+				
+				//update the HomePos on the map
+				homePos = new google.maps.Marker({
+					position: new google.maps.LatLng(OSD.homePosition.Latitude,OSD.homePosition.Longitude),
+					map: map,
+					title:"Home Position!"
+				});
+
             	console.log("Frame:",json.type,OSD); 
             break;
             

@@ -1,0 +1,71 @@
+div.content {
+    clear: left;
+    padding: 1em;
+	clear:both;
+}
+
+div.content input {
+	color: #000;
+	float:left;
+	font-size:10px;
+	border: 1px outset #000;
+	margin-right:1em;
+}
+
+
+div.content submit{
+	float:right;
+	border: 1px outset #000;
+}
+div.content.inactive {
+	display: none;
+}
+
+ol#toc {
+    height: 2em;
+    list-style: none;
+	font-size:11px;
+    margin: 0;
+    padding: 0;
+	background-color:#444;
+}
+
+ol#toc a {
+    color:#FFFAFA;
+    display: block;
+    float: left;
+    height: 2em;
+    padding-left: 10px;
+    text-decoration: none;
+}
+
+ol#toc a:hover {
+    background-color:#000;
+    background-position: 0 -120px;
+}
+
+ol#toc a:hover span {
+    background-position: 100% -120px;
+}
+
+ol#toc li {
+    float: left;
+    margin: 0 1px 0 0;
+}
+
+ol#toc li a.active {
+    background-color:#FFFAFA;
+    background-position: 0 -60px;
+    color:#000;
+    font-weight: bold;
+}
+
+ol#toc li a.active span {
+    background-position: 100% -60px;
+}
+
+ol#toc span {
+    display: block;
+    line-height: 2em;
+    padding-right: 10px;
+}

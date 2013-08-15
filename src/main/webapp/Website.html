@@ -1,0 +1,879 @@
+<!--UPDATE HAS BEEN // OUT FOR THE MOMENT BECAUSE IT INTRODUCES A BUG-->
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+    <link href="tabs.css" rel="stylesheet" type="text/css" />
+    <style type="text/css">
+	
+html { height: 100% }
+body { height: 100%; margin: 0; padding: 0; font:10px Verdana; color:#FFF; }
+ 
+#wrapper {
+position:relative;
+height:100%;
+width:100%;
+}
+
+#map_canvas {
+height: 100%;
+width: 100%;
+float:left;
+min-height:100%;
+}
+		 
+#menu {
+position:absolute;
+width: 320px;
+height:600px;
+right: 0; 
+top: 7%; 
+bottom: 0; 
+background-color:#FFFAFA;
+color:#000;
+opacity: 0.8;
+filter: alpha(opacity=20);
+}
+
+#markerWindow{
+	color:#000;
+}
+
+
+label {  width: 12em; float: left;  }
+    </style>
+    <script type="text/javascript"
+      src="http://maps.googleapis.com/maps/api/js?key=AIzaSyDbYw3BJL2Qp-GFS04fHAc_CYBaS59ks8A&sensor=false&libraries=drawing,geometry">
+    </script>
+
+    <script type="text/javascript"
+      src="GenerateMappingWaypoints.js">
+    </script>
+    <script type="text/javascript"
+      src="rotation.js">
+    </script>
+    
+    
+    <script type="text/javascript">
+	//google.load('earth', '1');
+	
+	var googleEarth;
+	var coord,mapOptions,map,rectangle,cirlce,selectedShape,addressField,geocoder;
+	var MappingWaypoints = new Array();
+	var mappingResult = new Array();
+	var PhotoArea = new Array();
+	var numberOfShapes = 0;
+	var polygonPaths;
+	var polylinePaths;
+	var photoRectArray = new Array();
+	var photo_size;
+	var resultRadians,resultDegrees;
+	var markerOff;
+	var markersArray = new Array();
+	var lineArray = new Array();
+	var lineCoordinates = new Array();
+	var elevator;
+	
+	//function ConsoleParser(){
+//		for (var i = 0; i<MappingWaypoints.length; i++){
+//			console.log(i,MappingWaypoints[i].lat().toFixed(6),MappingWaypoints[i].lng().toFixed(6));
+//		}	
+//	}
+	
+	function photoSizeCalc(){
+		console.log("Calculating photo size");
+		var sensor = copter_param.elements["sensor"].value;
+		var sensorH=0,sensorW = 0;
+		var focal =copter_param.elements["focal"].value;
+		var alt = copter_param.elements["altitude"].value;
+		
+		switch (sensor)
+		{	case 'ff':
+			sensorW = 24, sensorH = 36;
+			break;
+			
+			case 'apsc-1.5':
+			sensorW = 22.2, sensorH = 14.8;
+			break;
+			
+			case 'apsc-1.6':
+			sensorW = 23.6, sensorH = 15.7;
+			break;
+			
+			case 'nikon1/CX':
+			sensorW = 13.2, sensorH = 8.8;
+			break;
+			
+			case 'fourthirds':
+			sensorW = 17.3, sensorH = 13;
+			break;
+		}
+
+		
+		var photoH = parseInt(((alt*sensorH)/focal)); 
+		var photoW = parseInt(((alt*sensorW)/focal)); 
+		
+		console.log("New photo size (X/Y): "+photoW+"/"+photoH);
+		
+		photo_size = {'X' : photoW, 'Y' : photoH };
+		copter_param.elements["sizeX"].value = photoW;
+		copter_param.elements["sizeY"].value = photoH;
+	}
+
+	function setParameters(){
+		var _altitude = '80';
+
+		var _overlap = '20';
+		var _climb_rate = '28';
+		var _delay_time = '1';
+		var _speed = '50';
+		
+		copter_param.elements["altitude"].value = _altitude;
+	
+		photoSizeCalc();
+		copter_param.elements["climb"].value = _climb_rate;
+		copter_param.elements["overlap"].value = _overlap;
+		copter_param.elements["delay"].value = _delay_time;
+		copter_param.elements["speed"].value = _speed;
+
+	}	
+		
+	function getInformation (shape){
+		if (shape){
+			console.log("numberOfShapes"+numberOfShapes);
+			if (numberOfShapes==0) { 
+				// do nothing
+				console.log("No shape selected");
+			} else if (shape.getCenter == undefined){
+				console.log("getBounds(): "+shape.getBounds());
+			} else {
+				console.log("getCenter(): "+shape.getCenter());  //cannot call this because this method is circle only
+				console.log("getRadius(): "+shape.getRadius()); 
+			}
+			 
+	
+			console.log("getEditable(): "+shape.getEditable()); 
+			console.log("getVisible(): "+shape.getVisible()); //why is this undefined
+		}
+	}
+	
+	function clearSelection() {
+		if (selectedShape) {
+		  console.log("clearSelection");
+		  
+		  selectedShape.setEditable(false);
+		  selectedShape = null;
+		  numberOfShapes--;
+		}
+     }
+
+     function setSelection(shape) {
+		console.log("setSelection");
+		
+        clearSelection();
+        selectedShape = shape;
+        shape.setEditable(true);
+		numberOfShapes++;
+		//getInformation(shape);
+     }
+
+     function deleteSelectedShape() {
+		console.log("deleteSelectionShape");
+		
+		if (numberOfShapes == 0){
+			console.log("No shape has been drawn");
+		} else if (selectedShape.setEditable == false){
+			console.log("No shape is selected");
+		} else if (selectedShape) {
+          selectedShape.setMap(null);
+		  numberOfShapes--;
+        }
+     }
+	
+	function updateBounds()
+	{
+		//cut of after 7 digits
+		current_view.elements["lat"].value = map.getCenter().lat().toPrecision(7);
+		current_view.elements["long"].value = map.getCenter().lng().toPrecision(7);	
+	}
+		
+	function showDrawingManager(){
+		var managerOptions = {
+			drawingControl: true,
+			drawingControlOptions: {
+    			position: google.maps.ControlPosition.TOP_CENTER,
+    			drawingModes: [google.maps.drawing.OverlayType.MARKER,google.maps.drawing.OverlayType.POLYLINE,google.maps.drawing.OverlayType.POLYGON]
+  			},
+			markerOptions: {
+				editable: true,
+				icon : 'markerIcons/largeTDGreenIcons/blank.png'
+			},
+			polygonOptions: {
+				//blue #1E90FF, red #FF1493, green #32CD32, orange #FF8C00, purple #4B0082
+				//auto change http://www.geocodezip.com/v3_GoogleEx_DrawingTools_deleteAll.html
+				fillColor:"#1E90FF",
+				strokeColor:"#1E90FF",
+				editable:true
+			},
+			polylineOptions: {
+				strokeColor:"#FF273A",
+				editable:true
+			}
+		}
+		
+		var drawingManager = new google.maps.drawing.DrawingManager(managerOptions);
+		drawingManager.setMap(map);	
+		return drawingManager;
+	}
+	
+	function search() {
+		console.log("Searching...");
+		geocoder.geocode(
+			{'address': addressField.value}, 
+			function(results, status) { 
+				if (status == google.maps.GeocoderStatus.OK) { 
+					var loc = results[0].geometry.location;
+					// use loc.lat(), loc.lng()
+					console.log("lat: "+loc.lat()+" long: "+loc.lng());
+					var new_latlng = new google.maps.LatLng(loc.lat(),loc.lng());
+					map.panTo(new_latlng);
+				} 
+				else {
+					console.log("Not found: " + status); 
+				} 
+			});
+	}
+	
+	function changeLocation(){
+		console.log("Changing location to: "+current_view.elements["lat"].value + "/"+ current_view.elements["long"].value);
+		var new_latlng = new google.maps.LatLng(current_view.elements["lat"].value,current_view.elements["long"].value);
+		map.panTo(new_latlng);
+	}
+	
+	//polySides  =  how many corners the polygon has
+	//polyX    =  horizontal coordinates of corners
+	//polyY    =  vertical coordinates of corners
+	//point      =  point to be tested
+	function pointInPolygon(polySides,polyX,polyY,point){
+			var res=new Boolean();
+			res = false;
+			var y = point.lat();
+			var x = point.lng();
+		
+			var i=0,j=polySides-1;
+			
+			for (i=0; i<polySides; i++) {
+				if (polyY[i]<y && polyY[j]>=y ||  polyY[j]<y && polyY[i]>=y) {
+					
+					if (polyX[i]+(y-polyY[i])/(polyY[j]-polyY[i])*(polyX[j]-polyX[i])<x) {
+						
+						res=!res; 
+					}
+				}
+				
+				j=i; 
+			}
+			return res;
+	}
+	function drawMappedArea (){
+		console.log("Draw Mapped Area");
+		console.log(mappingResult.PhotoSize);
+		for (var i = 0; i<MappingWaypoints.length; i++){
+			//draw rect arround marker
+			corners = new Array();
+			corners = Findcorners(MappingWaypoints[i],mappingResult.PhotoSize);				
+			//sw?:LatLng, ne?:LatLng
+			var newSW = new google.maps.LatLng(corners[0].lat,corners[0].lng);
+			var newNE = new google.maps.LatLng(corners[2].lat,corners[2].lng);
+			var newRect = new google.maps.LatLngBounds(newSW,newNE);
+			
+			photoRect = new google.maps.Rectangle({bounds:newRect,fillColor:"#FF8C00",strokeColor:"#FF8C00",strokeOpacity:0.5,strokeWeight:2,fillOpacity:0.2});
+			photoRectArray.push(photoRect);
+			showMappedArea();
+		}
+	}
+	
+	function showMappedArea (){
+		if (photoRectArray) {
+			console.log("Show Mapped Area");
+			for (i in photoRectArray) {
+			  photoRectArray[i].setMap(map);
+			}
+		}
+	}
+	
+	function hideMappedArea (){
+		if (photoRectArray) {
+			console.log("Hide Mapped Area");
+			for (i in photoRectArray) {
+			  photoRectArray[i].setMap(null);
+			}
+		}	
+	}
+	
+	
+	
+	function generateWaypoints(){
+		console.log("numberOfShapes"+numberOfShapes);
+		if (numberOfShapes != 0 && selectedShape.getCenter == undefined){
+			var tempLatArray = new Array();
+			var tempLngArray = new Array();
+			
+			//polygon
+			console.log("(new)Generating Waypoints");
+			polygonPaths = selectedShape.getPaths();
+			console.log("Polygon array length: " + polygonPaths.getAt(0).getLength());
+			//make new array for lat and long of paths
+			for (var i=0;i<polygonPaths.getAt(0).getLength(); i++){
+				//console.log("coord: "+polygonPaths.getAt(0).getAt(i).lat());
+				tempLatArray.push(polygonPaths.getAt(0).getAt(i).lat());
+				tempLngArray.push(polygonPaths.getAt(0).getAt(i).lng());
+			}
+			
+			//calculating the rect coord
+			var minLat = Math.min.apply(null, tempLatArray), minLng = Math.min.apply(null, tempLngArray),
+				maxLat = Math.max.apply(null, tempLatArray), maxLng = Math.max.apply(null, tempLngArray);
+			
+			//console.log(minLat,maxLat,minLng,maxLng);
+			
+			var new_pointA = new google.maps.LatLng(minLat,minLng);
+			var new_pointB = new google.maps.LatLng(maxLat,maxLng);
+			
+			//console.log(new_pointA);
+			//console.log(new_pointB);
+			var new_bounds = new google.maps.LatLngBounds(new_pointA,new_pointB);
+			
+			//console.log(new_bounds);
+			rectangle = new google.maps.Rectangle({bounds:new_bounds});
+			//rectangle.setMap(map);
+			
+		
+			console.log("(old)Generating Waypoints");
+			// Param: NorthEast, SouthWest, StartingPoint, EndPoint, photo_size, Overlap, Attitude, ClimbRate, DelayTime
+			var northEast = map.getBounds().getNorthEast();
+			var southWest =  map.getBounds().getSouthWest();
+			//var startingPoint = selectedShape.getBounds().getSouthWest();
+			//var endPoint = selectedShape.getBounds().getNorthEast();
+			photo_size = {'X' : copter_param.elements["sizeX"].value, 'Y' : copter_param.elements["sizeY"].value };
+			
+			console.log ("MAINphoto_size.X: "+photo_size.X);
+			console.log ("MAINphoto_size.X: "+photo_size.Y);
+
+
+			var overlap = copter_param.elements["overlap"].value;
+			var altitude = copter_param.elements["altitude"].value ;
+			var climbRate = copter_param.elements["climb"].value;
+			var delayTime = copter_param.elements["delay"].value;
+			var speed = copter_param.elements["speed"].value;		
+			
+			//we generate a rectangle arround the polygon (and a angle of rotation for the rectangle)
+			mappingResult = GenerateMappingWaypoints(northEast,southWest,new_pointA,new_pointB,photo_size,
+											overlap,altitude,climbRate,delayTime,speed);
+											
+			MappingWaypoints	= mappingResult.MappingWaypoints;
+			
+			
+			//only keep the waypoints which actually fit inside the polygon
+			for (var i=0;i<MappingWaypoints.length ;i++){
+				if(pointInPolygon(polygonPaths.getAt(0).getLength(),tempLngArray,tempLatArray,MappingWaypoints[i]) == false){
+					corners = new Array();
+					var remove = new Boolean();
+					remove = false;
+					var z = 0;
+					//extra check if any of the corners of the waypoints being deleted in inside the polygon using Findcorners
+					corners = Findcorners(MappingWaypoints[i],photo_size);
+					//console.log("Check corners...");
+						
+					for (var z; z<corners.length; z++){
+						//console.log("lat: "+corners[z].lat+"lng: "+corners[z].lng);	
+						if(pointInPolygon(polygonPaths.getAt(0).getLength(),tempLngArray,tempLatArray,MappingWaypoints[i]) == true){
+							//console.log("Point is inside polygon");						
+							remove = false;
+							break;
+						} else {
+							//console.log("Point is not inside polygon");
+							remove=true;
+						}
+					}
+					
+					if (remove == true){
+						//remove wp from array
+						MappingWaypoints.splice(i,1);
+						i--;
+					}
+				}
+			}
+			//IN
+			//50.878721093976296
+			//4.7063782030570325
+			
+			//OUT
+			//50.877931616809306
+			//4.7090228572387005
+			
+			
+			//console.log("bool"+pointInPolygon(polygonPaths.getAt(0).getLength(),tempLngArray,tempLatArray,{'lat':50.878721093976296,'lng':4.7063782030570325}));
+			//console.log("bool2"+pointInPolygon(polygonPaths.getAt(0).getLength(),tempLngArray,tempLatArray,{'lat':50.877931616809306,'lng':4.7090228572387005}));
+			
+			
+			PhotoArea = mappingResult.PhotoArea;
+			//console.log("#elem"+MappingWaypoints.length);
+			for (var i = 0; i<MappingWaypoints.length; i++){
+				var coord = new google.maps.LatLng(MappingWaypoints[i].lat(),MappingWaypoints[i].lng());
+				var content = 	"<div id='markerWindow'>"+
+							  	"<h2>WP " + i + "</h2>"+
+								"<p><label>Latitude</label><input type='text' value='" + MappingWaypoints[i].lat() +"' id='lat' /></p>"+
+								"<p><label>Longitude</label><input type='text' value='" + MappingWaypoints[i].lng() +"' id='long' /></p>"+
+								"<p><label>Climb Rate (0.1 m/s)</label><input type='text' value='" + MappingWaypoints[i].ClimbRate +"' id='ClimbRate'/></p>"+
+								"<p><label>DelayTime (s)</label><input type='text' value='" + MappingWaypoints[i].DelayTime +"' id='DelayTime'/></p>"+
+								"<p><label>Speed (0.1 m/s)</label><input type='text' value='" + MappingWaypoints[i].Speed +"' id='Speed'/></p>"+
+								"</div>"
+				k = i+1;
+				add_marker(coord,"marker("+i+")",content,k);
+			
+				
+				if (i<MappingWaypoints.length-1){
+					//add_polyline(MappingWaypoints[i].lat(),MappingWaypoints[i].lng(),MappingWaypoints[i+1].lat(),MappingWaypoints[i+1].lng());
+				}
+			}
+			
+			// add_rect(PhotoArea.SouthWest,PhotoArea.NorthEast);
+			
+		} else {
+			console.log("No shape is selected; shape is not recognised (circle not implemented yet)");
+		}
+		
+	}
+	
+	
+	//function add_rect(SouthWest,NorthEast){
+//		var point = new google.maps.LatLng(SouthWest,NorthEast);
+//		 rectangle = new google.maps.Rectangle({bounds:point});
+//		 	
+//	}
+	
+	
+	var infowindow = new google.maps.InfoWindow({content: ''});
+
+	function add_marker(point, name, content,i)
+	{
+		var icon;
+		if(i==0){
+			icon ='markerIcons/largeTDRedIcons/blank.png';
+		} else {
+			icon ='markerIcons/largeTDRedIcons/marker'+i+'.png';
+		}
+		
+		var marker = new google.maps.Marker({
+			map: map,
+			position: point,
+			dragable: false,
+			clickable: true,
+			name: name,
+			raiseOnDrag: false,
+			icon: icon
+			 
+		});
+		marker.content = content;
+		google.maps.event.addListener(marker, 'click', function()
+		{
+		  infowindow.content = marker.content;
+		  infowindow.open(map, marker);
+		});
+		markersArray.push(marker);
+		return marker;
+	};
+	//
+//	function add_polyline(wpLat,wpLng){
+//		
+//	}
+//	
+	function clearAllMarkers() {
+	  for (var i = 0; i < markersArray.length; i++ ) {
+		markersArray[i].setMap(null);
+	  }
+	}
+	
+	function clearAllLines(){
+		lineCoordinates.length=0;
+		for (var i = 0; i < lineArray.length; i++ ) {
+			lineArray[i].setMap(null);
+	 	 }		
+	}
+	
+	function createXMLHttpRequest() {
+		try { 
+			return new XMLHttpRequest(); 
+		} catch(e) {} try { return new ActiveXObject("Msxml2.XMLHTTP"); 
+		} catch (e) {}
+			alert("XMLHttpRequest not supported");
+		return null;
+	}
+	
+	function update() {
+		console.log("Updating Database/KML file on Server/3D in earth");
+		//First we have to make a new array containing the elements we need
+		//Altitude;Latlng; 
+		
+		//console.log(newJ);
+		if (MappingWaypoints.length !=0){
+			var postContainer = new Array();
+			for (var i=0; i<MappingWaypoints.length; i++){
+				
+				postContainer.push(
+				 {
+					lat:MappingWaypoints[i].lat(),						
+					lng:MappingWaypoints[i].lng(),						
+					Altitude : MappingWaypoints[i].Altitude,
+				 }
+				 );	
+				 
+				 
+				 
+			}
+			
+			console.log(postContainer);
+		
+		var newJ = JSON.stringify(postContainer);
+			var xhReq = createXMLHttpRequest();
+					
+			var params = "lorem=ipsum&name=binny";
+			
+			xhReq.open("POST","parseKML.php",true);
+			
+			//encode using JSON
+			xhReq.setRequestHeader("Content-type", "application/json" );
+			xhReq.onreadystatechange = function() {
+				if (xhReq.readyState != 4 && xhReq.status != 200)  {
+					return; 
+				}
+				
+				var serverResponse = xhReq.responseText;
+				console.log("Update finished");
+				console.log(serverResponse);
+			};
+			
+			
+			xhReq.send(newJ);
+		}
+	}
+	
+	function initialize() {
+		coord = new google.maps.LatLng(50.8793686,4.70545304);
+		mapOptions = { 
+			zoom: 17, 
+			center: coord , 
+			panControl: true,
+			zoomControl: true,
+			mapTypeControl: true,
+			scaleControl: true,
+			streetViewControl: true,
+			overviewMapControl: true,
+			mapTypeId: google.maps.MapTypeId.HYBRID
+		};
+		map = new google.maps.Map(document.getElementById('map_canvas'), mapOptions);
+		var drawingManager = showDrawingManager();
+		elevator = new google.maps.ElevationService();
+		
+		
+		google.maps.event.addListener(map, 'click', function() {
+			console.log("Clicked the map");
+		});
+	
+
+		//3D
+		//googleEarth = new GoogleEarth(map);
+		
+		
+		
+		//var marker = new google.maps.Marker({ position: map.getCenter(), map: map, title: 'Click to zoom' });
+		
+		addressField = document.getElementById('search_address');
+		geocoder = new google.maps.Geocoder();
+		
+		setParameters();
+		//drawPoly();
+		
+		//listener to update the current coordinates
+		google.maps.event.addListener(map, 'bounds_changed', function() { window.setTimeout(function() { 
+			
+			<!--map.panTo(marker.getPosition());-->
+			<!--map.setZoom(4);-->
+			updateBounds(); 
+			<!--Also a delay is introduced-->
+		}); });
+		
+		
+		
+		google.maps.event.addListener(drawingManager, 'overlaycomplete', function(e) {
+            if (e.type != google.maps.drawing.OverlayType.MARKER) {
+            // Switch back to non-drawing mode after drawing a shape.
+            drawingManager.setDrawingMode(null);
+
+            // Add an event listener that selects the newly-drawn shape when the user
+            // mouses down on it.
+            var newShape = e.overlay;
+            newShape.type = e.type;
+            google.maps.event.addListener(newShape, 'click', function() {
+				setSelection(newShape);
+				
+				google.maps.event.addListener(newShape.getPath(), 'set_at', function() {
+					console.log("Creating a new path (set)");
+					if (resultDegrees != undefined){
+						clearAllMarkers();
+						clearAllLines();
+						generateWaypointsAtAngle(resultDegrees);
+						//update();
+					}
+				});
+				
+				google.maps.event.addListener(newShape.getPath(), 'insert_at', function() {
+					console.log("Creating a new path (insert)");
+					if (resultDegrees != undefined){
+						clearAllMarkers();
+						clearAllLines();
+						generateWaypointsAtAngle(resultDegrees);
+						//update();
+					}
+				});
+			
+            });
+			
+		
+	
+            setSelection(newShape);
+          }
+        });
+		
+		google.maps.event.addListener(drawingManager, 'polylinecomplete', function(circle) {
+			if (markerOff == undefined || markerOff == false){		
+				//find coord
+				polylinePaths = selectedShape.getPath();
+				
+				//console.log("# polyline coord: "+polylinePaths.getLength());
+				for (var i=0; i<polylinePaths.getLength(); i++){
+					//add markers
+					var coord = new google.maps.LatLng(polylinePaths.getAt(i).lat(),polylinePaths.getAt(i).lng());
+					var content = 	"<div id='markerWindow'>"+
+									"<h2>WP " + i + "</h2>"+
+									"<p><label>Latitude</label><input type='text' value='" + polylinePaths.getAt(i).lat() +"' id='lat' /></p>"+
+									"<p><label>Longitude</label><input type='text' value='" + polylinePaths.getAt(i).lng() +"' id='long' /></p>"+
+									"</div>"
+					add_marker(coord,"new marker",content,i);	
+				}
+	
+			}
+			
+			//polygonPaths.getAt(0).getAt(i).lat())
+			
+		});
+		
+	
+
+
+		
+
+		//AFTER DRAWING POLYGON SELECT THE POLYLINE TOOL TO DRAW BEARING
+		google.maps.event.addListener(drawingManager, 'polygoncomplete', function(circle) {
+					
+				console.log("You finished drawing the polygon. Please draw a direction.");
+				drawingManager.setDrawingMode(google.maps.drawing.OverlayType.POLYLINE);
+				
+				//CHANGE COLOR + DRAWING CONTROL OF
+				drawingManager.setOptions({
+				
+					polylineOptions: {
+						strokeColor:"#FF273A",
+						strokeOpacity:0.5,
+						strokeWeight:10,
+						clickable:false
+					},
+					
+					drawingControl:false
+				});
+				
+				markerOff = true;
+				//AFTER BEARING SET DRAWING CONTROL BACK ON
+				google.maps.event.addListener(drawingManager, 'polylinecomplete', function(circle) {
+					
+					console.log("You finished drawing the polyline");
+					dirPaths = selectedShape.getPath();
+					drawingManager.setDrawingMode(null);
+					
+					drawingManager.setOptions({
+						polylineOptions: {
+							strokeColor:"#FF1493",//1E90FF
+						},
+						
+						drawingControl:true
+					});
+					
+					//resultRadians = calculateAngle(dirPaths.getAt(0),dirPaths.getAt(1));
+					//resultDegrees = resultRadians*180/Math.PI;
+					resultDegrees = bearing(dirPaths.getAt(0),dirPaths.getAt(1));
+					console.log("angle: "+resultDegrees);
+					markerOff=false;
+							
+					var lineCoordinates = [
+						new google.maps.LatLng(dirPaths.getAt(0).lat(),dirPaths.getAt(0).lng()),
+						new google.maps.LatLng(dirPaths.getAt(1).lat(),dirPaths.getAt(1).lng())
+					];
+					
+					var lineSymbol = {
+						path: google.maps.SymbolPath.FORWARD_CLOSED_ARROW,
+						scale:6,
+						strokeOpacity:0.5
+					};
+					
+					var line = new google.maps.Polyline({
+						path: lineCoordinates,
+						icons: [{
+						icon: lineSymbol,
+						offset: '100%',
+					}],
+					
+					map: map,
+					strokeColor: "#FF273A",
+					strokeOpacity:1
+					});	
+					
+					
+					
+				});
+				
+			});
+			
+	
+			// Clear the current selection when the drawing mode is changed, or when the
+			// map is clicked.
+			google.maps.event.addListener(drawingManager, 'drawingmode_changed', clearSelection);
+			google.maps.event.addListener(map, 'click', clearSelection);
+		
+	};
+
+	google.maps.event.addDomListener(window, 'load', initialize);
+    </script>
+  </head>
+  <body onload="initialize()">
+   <!-- <div id="map_canvas" style="width:100%; height:100%"></div>-->
+    
+<div id="wrapper">
+  <div id="map_canvas"></div>
+
+    <div id="menu"> 
+    
+<ol id="toc">
+    <li><a href="#page-1"><span>Settings</span></a></li>
+    <li><a href="#page-2"><span>Mapping</span></a></li>
+    <li><a href="#page-3"><span>Communication</span></a></li>
+    <li><a href="#page-4"><span>3D</span></a></li>
+</ol>
+<div class="content" id="page-1">
+    <h2>Location</h2>
+    <p>Zoom in/out on the map or give a Latitude - Longitude coordinates.</p>
+    <form name="current_view" action="" method="get">
+        <p><input type="text" id="lat"/><input type="text" id="long"/></p>
+        
+	</form><button onclick="changeLocation();">Apply</button>
+    <p>Or search for a location (name of city)</p>
+    <input type="text" id="search_address" value=""/>
+	<button onclick="search();">Search</button>
+    <br><br>
+ 
+    <h2>Copter Parameters</h2>
+    
+    <form name="copter_param" action="" method="get">
+        <p><label>Altitude (m):</label></p>  <input type="text" name="altitude" onChange="photoSizeCalc()" /><br />
+        <p><label>Sensor Type</label>
+            <select id="sensor" name="sensor" onChange="photoSizeCalc()">
+              <option selected value="ff">*Full Frame* (ex: 1Ds,5D,D3,D800,D700,D600)</option>
+              <option value="apsc-1.5">*APS-C* 1,6x - Nikon (ex: D7000,D5100,D3200)</option>
+              <option value="apsc-1.6">*APS-C* 1,5x - Canon (ex: 7D,60D)</option>
+              <option value="fourthirds">*4/3* 2x -Olympus,Fuji</option>
+            </select>
+		</p>
+        
+        <p><label>Lens focal length</label>
+            <select id="focal" name="focal" onChange="photoSizeCalc()">
+              <option value="24">24mm</option>
+              <option value="28">28mm</option>
+              <option value="35">35mm</option>
+              <option selected value="50">50mm</option>
+              <option value="85">85mm</option>
+            </select>
+		</p>   
+        
+        <p>Photo size is calculated based on <b> sensor size</b>, <b>focal length</b> and <b>altitude</b></p>
+        
+        <p><label>Photo size[X/Y] (m):</label></p> 	<input style="width: 30px;"type="text" name="sizeX" />
+        											<input style="width: 30px;"  type="text" name="sizeY" /><br /><br><br>
+                                                    
+        <p><label>Overlap (%):</label></p> <input type="text" name="overlap" /><br />
+        <p><label>Climb Rate (0.1 m/s):</label></p> <input type="text" name="climb" /><br />
+        <p><label>Delay Time (s):</label></p> <input type="text" name="delay" /><br />
+        <p><label>Speed (0.1 m/s):</label></p> <input type="text" name="speed" /><br><br>
+        
+        
+      
+	</form>
+    
+</div>
+<div class="content" id="page-2">
+    <h2>Draw Shape</h2>
+    
+    <p>To define the area where the copter flights path will be calculated in: draw a shape using the icons in the top display</p>
+    <p><label><input type="button" value="Delete Selected Shape" onClick="deleteSelectedShape()"></label></p><br /><br />
+	<p><b>Generate the waypoints</b></p>
+    <p>Step 1: Draw the area using the polygon tool</p>
+    <p>Step 2: Click the button below</p>
+    <p><label><input type="button" value="Generate waypoints" onClick="generateWaypoints()"></label></p><br /><br />
+    <p><b>Generate the waypoints at an angle.</b></p>
+    <p>Step 1: Draw the area using the polygon tool</p>
+    <p>Step 2: Choose a bearing by drawing 1 polyline (click once to define a point and than click twice for the second point</p>
+    <p>Step 3: Select the shape and click the button below:</p>
+    <p><label><input type="button" value="Generate waypoints" onClick="generateWaypointsAtAngle(resultDegrees)"></label></p><br /><br />
+ 	<p><b>Draw the actual mapped area</b></p>
+    <p><label><input type="button" value="Draw Mapped Area" onClick="drawMappedArea()"></label></p><br><br />
+    <p style="font-size:9px">Warning: this is only an approximation as the real mapped area will still vary on the position of the camera which can also be influenced by extern factors</p>
+    <p>Hide or Show the mapped area</p>
+    <p><label><input type="button" value="Hide" onClick="hideMappedArea()"></label>
+    <label><input type="button" value="Show" onClick="showMappedArea()"></label></p><br /><br />
+	<p><b>And save/upload them to the copter</b></p>
+    <p><label><input type="button" value="Upload" onClick="" disabled></label></p><br /><br />
+
+	
+    
+    
+   
+    
+</div>
+<div class="content" id="page-3">
+    <h2>Send Waypoints to the Copter</h2>
+    <p>Here comes serial port communication with the copter.</p>
+</div>
+
+<div class="content" id="page-4">
+    <h2>Open a dynamic 3D view in google earth's software</h2>
+    <p>Editing is not yet supported.</p>
+    <p>Click <a href="NetworkLink.kml">here</a> to download the KML file.</p><br></br>
+    <h2>Open a dynamic 3D view in google earth plugin</h2>
+    <p>Alternative: When viewing this page on a device supporting the 3D plugin click here to start enable the 3D view (not implemented yet)</p>
+    <p>The plugin is supported on <b>windows</b> and <b>osx</b>. It is not supported on any mobile devices or linux however.</p>
+</div>
+    
+<script src="activatables.js" type="text/javascript"></script>
+<script type="text/javascript">
+activatables('page', ['page-1', 'page-2', 'page-3','page-4',]);
+</script>    
+     
+        
+    </div> 
+   
+
+  
+  <br clear="both" />
+</div>
+
+
+  </body>
+</html>

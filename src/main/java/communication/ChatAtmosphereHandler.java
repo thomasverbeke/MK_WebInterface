@@ -48,14 +48,6 @@ import java.util.concurrent.LinkedBlockingQueue;
 import javax.servlet.ServletContextAttributeEvent;
 import javax.servlet.ServletContextAttributeListener;
 
-
-/**
- * Simple AtmosphereHandler that implement the logic to build a Chat application.
- *
- * @author Jeanfrancois Arcand
- */
-
-
 @AtmosphereHandlerService(path="/chat",
         interceptors = {AtmosphereResourceLifecycleInterceptor.class,
                         BroadcastOnPostAtmosphereInterceptor.class})

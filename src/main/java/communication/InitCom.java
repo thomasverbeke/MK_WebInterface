@@ -11,10 +11,9 @@ import javax.servlet.ServletContextEvent;
 import javax.servlet.ServletContextListener;
 import java.util.concurrent.*;
 
-public class SerialComInit implements ServletContextListener {
+public class InitCom implements ServletContextListener {
 	private ExecutorService executor;
-	public int test;
-
+	
 	public void contextDestroyed(ServletContextEvent event) {
 		executor.shutdown();
 		
@@ -23,9 +22,10 @@ public class SerialComInit implements ServletContextListener {
 	public void contextInitialized(final ServletContextEvent event) {	
 		// start task
 		String serialPort = "/dev/cu.usbserial-A400782N"; //TODO Change to config file parameter
+		boolean testMode = true;
 		
 		try {
-			Thread thread = new Thread(new QueueReader(event, serialPort));
+			Thread thread = new Thread(new QueueReader(event, serialPort,testMode));
 			thread.start();
 		} catch (Exception e1) {
 			System.out.println("Problem in SerialComInit");

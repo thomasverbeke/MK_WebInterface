@@ -1,3 +1,67 @@
+function test(){
+	
+	//1 51.054013663835676 	3.7215113639831543
+	//2 51.054435162671005 	3.7222516536712646
+	//3 51.05410807990822 	3.724070191383362
+	//4 51.053528092421715 	3.7244564294815063
+	//5 51.05362925355283	3.723168969154358
+	//6 51.05363262558672	3.7221121788024902
+	//7 51.05383157515211	3.721822500228882
+	// angle: 465.74612556306204
+	
+	//MAKING GRAPHICS FOR THESIS PAPER
+	
+	var testCoord = [
+		new google.maps.LatLng(51.054013663835676,3.7215113639831543), //1
+		new google.maps.LatLng(51.054435162671005, 3.7222516536712646), //2
+		new google.maps.LatLng(51.05410807990822, 3.724070191383362), //3
+		new google.maps.LatLng(51.053528092421715, 3.7244564294815063), //4
+		new google.maps.LatLng(51.05362925355283, 3.723168969154358), //5
+		new google.maps.LatLng(51.05363262558672, 3.7221121788024902), //6
+		new google.maps.LatLng(51.05383157515211, 3.721822500228882) //7
+	 ];
+	
+	 var testPoly = new google.maps.Polygon({
+	    paths: testCoord,
+	    fillColor:"#1E90FF",
+	    strokeColor:"#1E90FF",
+		editable:true
+	 });
+
+	 testPoly.setMap(map);
+	 
+	 //add polyline for direction
+	 // 1 51.05328193274621	3.7223589420318604
+	 // 2 51.05430365544616	3.7243008613586426
+	 // angle:  489.9306456087913 
+	 var lineCoordinates = [
+				new google.maps.LatLng(51.05328193274621,3.7223589420318604),
+				new google.maps.LatLng(51.05430365544616,3.7243008613586426)
+			];
+			
+			var lineSymbol = {
+				path: google.maps.SymbolPath.FORWARD_CLOSED_ARROW,
+				scale:6,
+				strokeOpacity:0.5
+			};
+			
+			var line = new google.maps.Polyline({
+				path: lineCoordinates,
+				icons: [{
+				icon: lineSymbol,
+				offset: '100%',
+			}],
+			
+			map: map,
+			strokeColor: "#FF273A",
+			strokeWeight:10,
+			strokeOpacity:0.5
+			
+			});	
+	 
+	 drawPoly(testPoly,489.9306456087913);
+}
+
 function generateWaypointsAtAngle(resultDegrees, shape){
 	var angle = resultDegrees;
 	console.log("angleinside: "+angle);
@@ -29,7 +93,35 @@ function drawPoly(polygonPaths,_angle) {
 	xcenter = xsum/polygon.getLength();
 	ycenter = ysum/polygon.getLength();
 
+
 	var pivotPoint = new google.maps.LatLng(xcenter,ycenter);
+	/** GRAPHIC PURPOSE
+	var pivot = new google.maps.Marker({
+		position: pivotPoint,
+		title: 'pivot',
+		map: map,
+		dragable: false,
+		clickable: true,
+		name: 'pivot',
+		raiseOnDrag: false,
+		setZIndex: 20
+	});
+	
+	google.maps.event.addListener(pivot, 'click', (function(i,marker){
+		return function (){
+			
+			var content = 	"<div id='markerWindow'>"+
+			"<h2>Pivot</h2>"+
+			"</div>"
+			
+			infowindow.setContent(content);
+			infowindow.open(map,pivot);
+			
+		}
+
+	})(i,marker));
+
+	**/
 
 	//3 FIND THE ROTATION ANGLE (NOW A PROPERTY OF THIS FUNCTION)
 	var angle = -_angle+90;
@@ -50,6 +142,9 @@ function drawPoly(polygonPaths,_angle) {
     });
 
 	newPoly.setPath(newPath);
+	newPoly.setMap(map);
+	
+
 	
 	//5 FIND THE COORD OF THE BOUNDING BOX
 	var tempLatBBArray = new Array();
@@ -70,9 +165,10 @@ function drawPoly(polygonPaths,_angle) {
 	
 	var BB_Bounds = new google.maps.LatLngBounds(BBpointA,BBpointB);
 	
-	var BB = new google.maps.Rectangle({bounds:BB_Bounds,fillColor:"#FF8C00",strokeColor:"#FF8C00",strokeOpacity:0.5,strokeWeight:2,fillOpacity:0.2});
-	//BB.setMap(map);
+	var BB = new google.maps.Rectangle({bounds:BB_Bounds,fillColor:"#0000FF",strokeColor:"#0000FF",strokeOpacity:0.2,strokeWeight:2,fillOpacity:0.1});
+	BB.setMap(map);
 	
+
 	//7 DRAW THE PATH
 	photo_size = {'X' : copter_param.elements["sizeX"].value, 'Y' : copter_param.elements["sizeY"].value };
 	
@@ -91,6 +187,57 @@ function drawPoly(polygonPaths,_angle) {
 	console.log(mappingResult);
 									
 	MappingWaypoints	= mappingResult.MappingWaypoints;
+	
+	
+	for (var i = 0; i<MappingWaypoints.length; i++){
+		var coord = new google.maps.LatLng(MappingWaypoints[i].lat(),MappingWaypoints[i].lng());
+
+		var icon ='markerIcons/largeTDRedIcons/marker'+i+'.png';
+		
+		// Add a new marker at the new plotted point on the polyline.
+		var marker = new google.maps.Marker({
+			position: coord,
+			title: '#' + path.getLength(),
+			map: map,
+			dragable: false,
+			clickable: true,
+			name: name,
+			raiseOnDrag: false,
+			icon: icon,
+			setZIndex: 20
+		});
+		
+
+		//draw rect arround marker
+		corners = new Array();
+		corners = Findcorners(MappingWaypoints[i],mappingResult.PhotoSize);	
+		
+		/** show markers on corners for debugging
+		for (var j=0;  j<corners.length; j++){
+			var marker = new google.maps.Marker({
+				position: new google.maps.LatLng(corners[j].lat, corners[j].lng),
+				map: map,
+				dragable: false,
+				clickable: true,
+				name: name,
+				raiseOnDrag: false,
+				setZIndex: 20
+			});
+		}
+		**/
+		//sw?:LatLng, ne?:LatLng
+		var newSW = new google.maps.LatLng(corner_gps[0].lat,corner_gps[0].lng);
+		var newNE = new google.maps.LatLng(corner_gps[2].lat,corner_gps[2].lng);
+		var newRect = new google.maps.LatLngBounds(newSW,newNE);
+		
+		var photoRect = new google.maps.Rectangle({bounds:newRect,fillColor:"#FF8C00",strokeColor:"#FF8C00",strokeOpacity:0.5,strokeWeight:2,fillOpacity:0.2});
+		photoRect.setMap(map)
+		
+
+	}
+
+	
+	return; 
 	
 	//only keep the waypoints which actually fit inside the polygon
 	for (var i=0;i<MappingWaypoints.length ;i++){
