@@ -188,6 +188,7 @@ function drawPoly(polygonPaths,_angle) {
 									
 	MappingWaypoints	= mappingResult.MappingWaypoints;
 	
+	/**  GRAPHIC PURPOSE
 	
 	for (var i = 0; i<MappingWaypoints.length; i++){
 		var coord = new google.maps.LatLng(MappingWaypoints[i].lat(),MappingWaypoints[i].lng());
@@ -215,7 +216,7 @@ function drawPoly(polygonPaths,_angle) {
 		/** show markers on corners for debugging
 		for (var j=0;  j<corners.length; j++){
 			var marker = new google.maps.Marker({
-				position: new google.maps.LatLng(corners[j].lat, corners[j].lng),
+				position: new google.maps.LatLng(corners[j].lat(), corners[j].lng()), 
 				map: map,
 				dragable: false,
 				clickable: true,
@@ -224,20 +225,23 @@ function drawPoly(polygonPaths,_angle) {
 				setZIndex: 20
 			});
 		}
-		**/
+		
+		
+		
 		//sw?:LatLng, ne?:LatLng
-		var newSW = new google.maps.LatLng(corner_gps[0].lat,corner_gps[0].lng);
-		var newNE = new google.maps.LatLng(corner_gps[2].lat,corner_gps[2].lng);
+		var newSW = new google.maps.LatLng(corner_gps[0].lat,corner_gps[0].lng());
+		var newNE = new google.maps.LatLng(corner_gps[2].lat,corner_gps[2].lng());
 		var newRect = new google.maps.LatLngBounds(newSW,newNE);
 		
-		var photoRect = new google.maps.Rectangle({bounds:newRect,fillColor:"#FF8C00",strokeColor:"#FF8C00",strokeOpacity:0.5,strokeWeight:2,fillOpacity:0.2});
+		var photoRect = new google.maps.Rectangle({bounds:newRect,fillColor:"#000000",strokeColor:"#000000",strokeOpacity:0.5,strokeWeight:2,fillOpacity:0.2});
 		photoRect.setMap(map)
 		
 
 	}
+	**/
 
 	
-	return; 
+	
 	
 	//only keep the waypoints which actually fit inside the polygon
 	for (var i=0;i<MappingWaypoints.length ;i++){
@@ -248,10 +252,10 @@ function drawPoly(polygonPaths,_angle) {
 			var z = 0;
 			//extra check if any of the corners of the waypoints being deleted in inside the polygon using Findcorners
 			corners = Findcorners(MappingWaypoints[i],photo_size);
-			//console.log("Check corners...");
+			//console.log("lat: "+corners[z].lat()+" lng: "+corners[z].lng());
 	
 			for (var z; z<corners.length; z++){
-				if(pointInPolygon(polygon.getLength(),tempLngBBArray,tempLatBBArray,MappingWaypoints[i]) == true){
+				if(pointInPolygon(polygon.getLength(),tempLngBBArray,tempLatBBArray,corners[z]) == true){
 					//console.log("lat: "+corners[z].lat+"lng: "+corners[z].lng);	
 					//console.log("Point is inside polygon");						
 					remove = false;
@@ -269,6 +273,44 @@ function drawPoly(polygonPaths,_angle) {
 			}
 		}
 	}
+	
+	
+	for (var i = 0; i<MappingWaypoints.length; i++){
+		var coord = new google.maps.LatLng(MappingWaypoints[i].lat(),MappingWaypoints[i].lng());
+
+		var icon ='markerIcons/largeTDRedIcons/marker'+i+'.png';
+		
+		// Add a new marker at the new plotted point on the polyline.
+		var marker = new google.maps.Marker({
+			position: coord,
+			title: '#' + path.getLength(),
+			map: map,
+			dragable: false,
+			clickable: true,
+			name: name,
+			raiseOnDrag: false,
+			icon: icon,
+			setZIndex: 20
+		});
+		
+
+		//draw rect arround marker
+		corners = new Array();
+		corners = Findcorners(MappingWaypoints[i],mappingResult.PhotoSize);	
+		
+		
+		//sw?:LatLng, ne?:LatLng
+		var newSW = new google.maps.LatLng(corner_gps[0].lat(),corner_gps[0].lng());
+		var newNE = new google.maps.LatLng(corner_gps[2].lat(),corner_gps[2].lng());
+		var newRect = new google.maps.LatLngBounds(newSW,newNE);
+		
+		var photoRect = new google.maps.Rectangle({bounds:newRect,fillColor:"#000000",strokeColor:"#000000",strokeOpacity:0.5,strokeWeight:2,fillOpacity:0.2});
+		photoRect.setMap(map)
+		
+
+	}
+	
+	return;
 	
 	//console.log("#0: "+MappingWaypoints.length);
 	

@@ -213,7 +213,7 @@ console.log ("photo_size.X: "+photo_size.Y);
 								} else { return v; }
 				
 							}
-						}	)(current_point_gps.lat),
+						}	)(current_point_gps.lat()),
 					
 			lng: (function(v) 
 						{	return function()	
@@ -223,7 +223,7 @@ console.log ("photo_size.X: "+photo_size.Y);
 								} else { return v; }
 				
 							}
-						}	)(current_point_gps.lng),		
+						}	)(current_point_gps.lng()),		
           
 						
             Radius : 10,
@@ -306,7 +306,7 @@ function MeterstoGPS(Meters_position)
    ;
    
    var _BL = new google.maps.LatLng(Bottom_Left.lat,Bottom_Left.lng);
-
+   var result = new google.maps.LatLng(google.maps.geometry.spherical.computeOffset(_BL,Meters_position.Y,0).lat(),google.maps.geometry.spherical.computeOffset(_BL,Meters_position.X,90).lng());
    test = {
 		   'lng':google.maps.geometry.spherical.computeOffset(_BL,Meters_position.X,90).lng(),
 		   'lat':google.maps.geometry.spherical.computeOffset(_BL,Meters_position.Y,0).lat()
@@ -314,7 +314,7 @@ function MeterstoGPS(Meters_position)
  
    console.log(GPS_pos);
    console.log(test);
-   return test;
+   return result;
 }
 
 // Distance between 2 GPS positions
