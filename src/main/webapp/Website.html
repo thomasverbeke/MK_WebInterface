@@ -284,7 +284,7 @@ label {  width: 12em; float: left;  }
 			corners = Findcorners(MappingWaypoints[i],mappingResult.PhotoSize);				
 			//sw?:LatLng, ne?:LatLng
 			var newSW = new google.maps.LatLng(corners[0].lat,corners[0].lng);
-			var newNE = new google.maps.LatLng(corners[2].lat,corners[2].lng);
+			var newNE = new google.maps.LatLng(corners[2].lat,corner_gps[2].lng);
 			var newRect = new google.maps.LatLngBounds(newSW,newNE);
 			
 			photoRect = new google.maps.Rectangle({bounds:newRect,fillColor:"#FF8C00",strokeColor:"#FF8C00",strokeOpacity:0.5,strokeWeight:2,fillOpacity:0.2});

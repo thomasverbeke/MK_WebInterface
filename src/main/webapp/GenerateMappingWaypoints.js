@@ -138,7 +138,7 @@ console.log ("photo_size.X: "+photo_size.Y);
    console.log("no_of_points Y: "+no_of_points.Y);
  
 
-   // A smart way to adapt to small mapping area : D
+  
    if ((mapping_area.X < photo_size.X) && (mapping_area.Y < photo_size.Y))
    {
       no_of_points.X = 1;
@@ -382,46 +382,37 @@ function GPStoMeters(GPS_position){
 	}
 	
 	
-function Findcorners(centerpoint,photosize)
-{
+function Findcorners(centerpoint,photosize){
 	corner = new Array();
 	corner_gps = new Array();
 	
 	centerpoint_meter = GPStoMeters(centerpoint);
 	
-	corner.push(
-	{
-		X:  parseInt(centerpoint_meter.X)-parseInt(photosize.X)/2, Y : parseInt(centerpoint_meter.Y)-parseInt(photosize.Y)/2
-		}
-	);
-	
-	corner.push(
-	{
-		X:  parseInt(centerpoint_meter.X)+parseInt(photosize.X)/2, Y : parseInt(centerpoint_meter.Y)-parseInt(photosize.Y)/2
+	corner.push({
+		X:  parseInt(centerpoint_meter.X)-parseInt(photosize.X)/2, 
+		Y : parseInt(centerpoint_meter.Y)-parseInt(photosize.Y)/2
 	});
 	
-	corner.push(
-	{
-		X:  parseInt(centerpoint_meter.X)+parseInt(photosize.X)/2, Y : parseInt(centerpoint_meter.Y)+parseInt(photosize.Y)/2
-		}
-	);
+	corner.push({
+		X:  parseInt(centerpoint_meter.X)+parseInt(photosize.X)/2, 
+		Y : parseInt(centerpoint_meter.Y)-parseInt(photosize.Y)/2
+	});
+	
+	corner.push({
+		X:  parseInt(centerpoint_meter.X)+parseInt(photosize.X)/2, 
+		Y : parseInt(centerpoint_meter.Y)+parseInt(photosize.Y)/2
+	});
 
-	corner.push(
-	{
-		X:  parseInt(centerpoint_meter.X)-parseInt(photosize.X)/2, Y : parseInt(centerpoint_meter.Y)+parseInt(photosize.Y)/2
-		}
-	);
-	
-	console.log(corner);
-	
+	corner.push({
+		X:  parseInt(centerpoint_meter.X)-parseInt(photosize.X)/2, 
+		Y : parseInt(centerpoint_meter.Y)+parseInt(photosize.Y)/2
+	});
+
 	for (var i=0; i<4;i++)
 	{
 		corner_gps.push(MeterstoGPS(corner[i]));
-		}
+	}
 	
-			
-			
 	return corner_gps;
-
 }
 

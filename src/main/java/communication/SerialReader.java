@@ -303,15 +303,13 @@ public class SerialReader extends CommunicationBase implements Runnable,SerialPo
             	final int RxdBuffer_work[] = new int[MAX_SIZE_BUFFER];
             	System.arraycopy(RxdBuffer, 0, RxdBuffer_work, 0, RxdBuffer.length);
 
-            		Thread thread = new Thread(new Runnable(){
-
+            	Thread thread = new Thread(new Runnable(){
 					@Override
 					public void run() {
-						// TODO Auto-generated method stub
 						handleFrame(RxdBuffer_work);
 					}
-            		
-            	});
+    			});
+            	
 	     		thread.start();
             }	                               	                                   	                                                                        
     	} else {

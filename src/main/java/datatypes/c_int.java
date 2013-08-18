@@ -63,8 +63,7 @@ public abstract class c_int {
             for (c_int c : allAttribs) {
                 c.loadFromInt(decodedDataFrame, dataPointer + offset);
                 offset += c.getLength() / 8;
-            }
-      
+            }   
         } else {
         	//long data type is a 64-bit signed
             long v = 0;
@@ -85,7 +84,6 @@ public abstract class c_int {
                     if (signbit == 1) {
                         v = v + getMin();
                     }
-//                  System.out.println(v);
                 }
                 setValue(v);
             } else {

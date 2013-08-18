@@ -142,7 +142,7 @@ function drawPoly(polygonPaths,_angle) {
     });
 
 	newPoly.setPath(newPath);
-	newPoly.setMap(map);
+	//newPoly.setMap(map);
 	
 
 	
@@ -166,7 +166,7 @@ function drawPoly(polygonPaths,_angle) {
 	var BB_Bounds = new google.maps.LatLngBounds(BBpointA,BBpointB);
 	
 	var BB = new google.maps.Rectangle({bounds:BB_Bounds,fillColor:"#0000FF",strokeColor:"#0000FF",strokeOpacity:0.2,strokeWeight:2,fillOpacity:0.1});
-	BB.setMap(map);
+	//BB.setMap(map);
 	
 
 	//7 DRAW THE PATH
@@ -241,9 +241,7 @@ function drawPoly(polygonPaths,_angle) {
 	**/
 
 	
-	
-	
-	//only keep the waypoints which actually fit inside the polygon
+
 	for (var i=0;i<MappingWaypoints.length ;i++){
 		if(pointInPolygon(polygon.getLength(),tempLngBBArray,tempLatBBArray,MappingWaypoints[i]) == false){
 			corners = new Array();
@@ -252,16 +250,12 @@ function drawPoly(polygonPaths,_angle) {
 			var z = 0;
 			//extra check if any of the corners of the waypoints being deleted in inside the polygon using Findcorners
 			corners = Findcorners(MappingWaypoints[i],photo_size);
-			//console.log("lat: "+corners[z].lat()+" lng: "+corners[z].lng());
-	
+
 			for (var z; z<corners.length; z++){
-				if(pointInPolygon(polygon.getLength(),tempLngBBArray,tempLatBBArray,corners[z]) == true){
-					//console.log("lat: "+corners[z].lat+"lng: "+corners[z].lng);	
-					//console.log("Point is inside polygon");						
+				if(pointInPolygon(polygon.getLength(),tempLngBBArray,tempLatBBArray,corners[z]) == true){					
 					remove = false;
 					break;
 				} else {
-					//console.log("Point is not inside polygon");
 					remove=true;
 				}
 			}
@@ -274,7 +268,7 @@ function drawPoly(polygonPaths,_angle) {
 		}
 	}
 	
-	
+	/**  GRAPHIC PURPOSE
 	for (var i = 0; i<MappingWaypoints.length; i++){
 		var coord = new google.maps.LatLng(MappingWaypoints[i].lat(),MappingWaypoints[i].lng());
 
@@ -309,8 +303,8 @@ function drawPoly(polygonPaths,_angle) {
 		
 
 	}
+	**/
 	
-	return;
 	
 	//console.log("#0: "+MappingWaypoints.length);
 	
@@ -338,7 +332,9 @@ function drawPoly(polygonPaths,_angle) {
 	
 	newPoly.setPath(newPath);
 	
-	//10 ROTATE THE WP
+	
+	
+	//10 ROTATE THE WP'S BACK
 	var newWP = rotatePoly(MappingWaypoints,pivotPoint,-angle);
 	
 	//change the rotated WP in the MappingWaypoints array
@@ -563,10 +559,11 @@ function bearing(p1,p2) {
 		var bearing = 360 - bearing + 180; // 0 degrees at 3 o'clock and counting couterclockwise
 
 	}
+	
+	
 	return bearing;
 
 }
-
 
 
 // Calculate the direction angle of waypoint's direction w.r.t the horizon
