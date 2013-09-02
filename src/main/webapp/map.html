@@ -492,6 +492,7 @@ height: 350px;
 		end : 0
 	};
 	
+	
 	function toggle(target){
 		switch (target){
 			case "OSDMenu":
@@ -526,16 +527,95 @@ height: 350px;
     	 var temp = "";
     	 for (var i=0; i<markersArray.length; i++){
     		 //markersArray[i].position.lat()
-    		 temp +="<div onmouseover='showMouseMarker(this)' onmouseout='clearMouseMarker(this)' class='wplist' id=wp_"+i+">WP_"+i+"</div>"
+    		 temp +="<div onmouseover='showMouseMarker(this)' onmouseout='clearMouseMarker(this)' class='wplist' id=wp_"+i+">WP_"+i+" <a onclick='removeWP("+i+")'>X</a></div>"
     	 }
     	 document.getElementById("waypoint_list").innerHTML = temp;
     	 //console.log(markersArray);
     	 console.log(wpArray);
      }
      
+     function removeWP(id){
+    	
+    	 //remove marker from the map
+    	 //save array temp in memory
+    	 tmpArray = new Array();
+    	 tmpArray = markersArray.slice(0);
+    	 
+    	 tmpArray.splice(id, 1);
+    	 
+    	 removeAllWP();
+    	 //reAdd the old ones
+    	 for (var i=0; i<tmpArray.length; i++){
+	   		 
+	   		 var icon ='markerIcons/largeTDRedIcons/marker'+i+'.png';
+				path = poly.getPath();
+				
+				// Because path is an MVCArray, we can simply append a new coordinate
+				// and it will automatically appear
+				path.push(tmpArray[i].position);
+			
+				// Add a new marker at the new plotted point on the polyline.
+				var marker = new google.maps.Marker({
+					position: tmpArray[i].position,
+					title: '#' + path.getLength(),
+					map: map,
+					dragable: false,
+					clickable: true,
+					name: name,
+					raiseOnDrag: false,
+					icon: icon,
+					setZIndex: 20
+				});
+				
+				var content = 	"<div id='markerWindow'>"+
+				"<h2>WP"+(path.getLength()-1)+"</h2>"+
+				"<p><label>Latitude </label><input type='text' value='"+tmpArray[i].position.lat()+"' id='lat' /></p>"+
+				"<p><label>Longitude </label><input type='text' value='"+tmpArray[i].position.lng()+"' id='long' /></p>"+
+				"</div>"
+				
+				//Do we need closure?
+				google.maps.event.addListener(marker, 'click', function(){
+					infowindow.setContent(content);
+					infowindow.open(map,marker);
+					
+				});
+				
+				markersArray.push(marker);
+			
+				//fill the wp with standard values
+				var position = ({
+					"Latitude" : tmpArray[i].position.lat(),
+					"Longitude" : tmpArray[i].position.lng(),
+					"Altitude" : 200, //20m
+					"Status" : 1 		
+				});
+				
+	     	var wp = ({
+	     		"Position" : position,
+	     		"Heading" :0 ,
+	     		"ToleranceRadius" :10,
+	     		"HoldTime" : 10,
+	     		"Event_Flag" : 1,
+	     		"Index" : (path.getLength()-1),
+	     		"Type" : 0,              	
+	     		"WP_EventChanneldata" : 100,
+	     		"AltitudeRate" : 10,
+	     		"Speed" : 100, //1m
+	     		"CamAngle" : 0,
+	     		"Name" :  0		
+	     	});
+    		 
+    	 }
+    	 
+    	 update_list();
+	 
+     }
+     
      function removeAllWP(){
     	 path.clear();
-    	 if (polygon != "undefined"){
+    	 if (typeof polygon === "undefined"){
+    		 console.log("polygon undefined");
+    	 } else {
     		 polygon.setMap(null); //remove polygon
     		 line.setMap(null); //remove direction line
     	 }
@@ -577,36 +657,36 @@ height: 350px;
      }
      
     function init_gauge(){  	 
-    	 var g1 = new JustGage({
+    	  g1 = new JustGage({
  	        id: "g1", 
- 	        value: getRandomInt(0, 30), 
+ 	        value: 0, 
  	        min: 0,
  	        max: 50,
- 	        title: "Vertical Speed",
+ 	        title: "Gas",
  	        label: "m/s"
  	     });
  	     
- 	     var g2 = new JustGage({
+ 	      g2 = new JustGage({
  		        id: "g2", 
- 		        value: getRandomInt(0, 30), 
+ 		        value: 0, 
  		        min: 0,
  		        max: 50,
  		        title: "Ground Speed",
  		        label: "m/s"
  		     });
  	     
- 	     var g3 = new JustGage({
+ 	      g3 = new JustGage({
  		        id: "g3", 
- 		        value: getRandomInt(0, 100), 
+ 		        value: 0, 
  		        min: 0,
  		        max: 250,
  		        title: "Altitude",
  		        label: "m"
  		     });
  	     
- 	     var g4 = new JustGage({
+ 	      g4 = new JustGage({
  		        id: "g4", 
- 		        value: getRandomInt(0, 180), 
+ 		        value: 0, 
  		        min: 0,
  		        max: 180,
  		        title: "Heading",
@@ -614,18 +694,18 @@ height: 350px;
  		     });
  	    
  	     
- 	     var g6 = new JustGage({
+ 	      g6 = new JustGage({
  		        id: "g6", 
- 		        value: getRandomInt(0, 3500), 
+ 		        value: 0, 
  		        min: 0,
  		        max: 3500,
  		        title: "Used Capacity",
  		        label: "mAh"
  		     });
  	     
- 	     var g6 = new JustGage({
+ 	      g7 = new JustGage({
  		        id: "g7", 
- 		        value: getRandomInt(0, 20), 
+ 		        value: 0, 
  		        min: 0,
  		        max: 20,
  		        title: "# GPS Sats ",
@@ -676,8 +756,8 @@ height: 350px;
     var currentPos; 
 	function initialize() {
 			init_gauge();
-			
-			coord = new google.maps.LatLng(51.054013663835676,3.7215113639831543);
+			//51.048557436570846 3.6861169325129595
+			coord = new google.maps.LatLng(51.048557436570846,3.6861169325129595);
 			mapOptions = { 
 				zoom: 17, 
 				center: coord , 

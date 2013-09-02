@@ -1,5 +1,5 @@
 //TODO reconnect feature & button
-
+var g1,g2,g3,g4,g6,g7;
 var subSocket; //we want to acces it outside of jquery
 $(function () {
     "use strict";
@@ -134,50 +134,39 @@ $(function () {
 					"version" : json.data[37]
 				});
 				
-//            	document.getElementById("OSD0").innerHTML = "CurrentPosition: "+ OSD.currentPosition.Latitude+" /  "+ OSD.currentPosition.Longitude+" / "+ OSD.currentPosition.Altitude+"";
-//            	document.getElementById("OSD1").innerHTML = "TargetPosition: "+ OSD.currentPosition.Latitude+" /  "+ OSD.currentPosition.Longitude+" / "+ OSD.currentPosition.Altitude+"";
-//            	document.getElementById("OSD2").innerHTML = "HomePosition: "+ OSD.currentPosition.Latitude+" /  "+ OSD.currentPosition.Longitude+" / "+ OSD.currentPosition.Altitude+"";
-//            	document.getElementById("OSD3").innerHTML = "CurrentWP/TotalWP: "+OSD.waypointIndex+ "/" + OSD.waypointNumber;
-//            	document.getElementById("OSD4").innerHTML = "StatsInUse: " + OSD.satsInUse;
-//            	document.getElementById("OSD5").innerHTML = "Altimeter (air pressure): " + OSD.altimeter;
-//            	document.getElementById("OSD6").innerHTML = "Variometer (climb/sink rate): " + OSD.variometer;
-//            	document.getElementById("OSD7").innerHTML = "FlyingTime" + OSD.flyingTime + "s";
-//            	document.getElementById("OSD8").innerHTML = "Battery Voltage: " + OSD.uBat + "V";
-//            	document.getElementById("OSD9").innerHTML = "GroundSpeed: " + OSD.groundSpeed + "cm/s";
-//            	document.getElementById("OSD10").innerHTML = "Heading (angle to north): " + OSD.heading;
-//            	document.getElementById("OSD11").innerHTML = "CompassHeading: " + OSD.compassHeading;
-//            	document.getElementById("OSD12").innerHTML = "AngleNick: " + OSD.angleNick;
-//            	document.getElementById("OSD13").innerHTML = "AngleRoll: " + OSD.angleRoll;
-//            	document.getElementById("OSD14").innerHTML = "RCQuality: " + OSD.rcQuality;
-//            	document.getElementById("OSD15").innerHTML = "OperatingRadius: " + OSD.OperatingRadius;
-//            	document.getElementById("OSD16").innerHTML = "TopSpeed: " + OSD.TopSpeed;
-//            	document.getElementById("OSD17").innerHTML = "TargetHoldTime: " + OSD.TargetHoldTime;
-//            	document.getElementById("OSD18").innerHTML = "SetPointAltitude: " + OSD.SetpointAltitude;
-//            	document.getElementById("OSD19").innerHTML = "Current: " + OSD.Current;
-//            	document.getElementById("OSD18").innerHTML = "Gas: " + OSD.Gas;
-//            	document.getElementById("OSD21").innerHTML = "UsedCapacity: " + OSD.UsedCapacity;
-//            	document.getElementById("OSD22").innerHTML = "Version: " + OSD.version;
-            	
+				g1.refresh(OSD.Gas);
+				g2.refresh(OSD.groundSpeed);
+				g3.refresh(OSD.altimeter);
+				g4.refresh(OSD.heading);
+				//g1.refresh(OSD.flyingTime);
+				g6.refresh(OSD.UsedCapacity);
+				g7.refresh(OSD.satsInUse);
+         	
             	//update the currentPosition on the map
 				currentPos = new google.maps.Marker({
 					position: new google.maps.LatLng(OSD.currentPosition.Latitude,OSD.currentPosition.Longitude),
 					map: map,
-					title:"Current Position!"
+					title:"Current Position",
+					icon : 'markerIcons/current_small_grey.png'
 				});
 				
 				//update the targetPosition on the map
 				targetPos = new google.maps.Marker({
 					position: new google.maps.LatLng(OSD.targetPosition.Latitude,OSD.targetPosition.Longitude),
 					map: map,
-					title:"Target Position!"
+					title:"Target Position",
+					icon : 'markerIcons/target_small_grey.png'
 				});
 				
 				//update the HomePos on the map
 				homePos = new google.maps.Marker({
 					position: new google.maps.LatLng(OSD.homePosition.Latitude,OSD.homePosition.Longitude),
 					map: map,
-					title:"Home Position!"
+					title:"Home Position",
+					icon : 'markerIcons/home_small_grey.png'
 				});
+				
+				
 
             	console.log("Frame:",json.type,OSD); 
             break;

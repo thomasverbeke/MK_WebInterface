@@ -44,25 +44,30 @@ public class QueueReader extends SerialReader {
 				outStream = debugOutStream;
 				//send dummy data at regular interval (interval = 3s)
 			
-				
 				timer.scheduleAtFixedRate(new TimerTask(){
 					public void run(){
+						
 						 ArrayList OSD = new ArrayList(); 
 			                /** CurrentPosition **/
+						 
+						 
 			                OSD.add("OSD");
 			                Waypoint_t wp_target = new Waypoint_t("new target");                          
 			                OSD.add((double)510481055/(double)10000000); // in 1E-7 deg
 			                OSD.add((double) 36827906/(double) 10000000); // in 1E-7 deg
 			                OSD.add((double)5038/(double)1000); // in mm
-			                OSD.add(0x01); // validity of data 
+			                OSD.add(0x01); // validity of data
+						            
 			                /** TargetPosition **/
-			                OSD.add((double)510481055/(double)10000000); // in 1E-7 deg
-			                OSD.add((double)36827906/(double)10000000); // in 1E-7 deg
+			                OSD.add((double)510492656/(double)10000000); // in 1E-7 deg
+			                OSD.add((double)36834561/(double)10000000); // in 1E-7 deg
 			                OSD.add((double)5038/(double)1000); // in mm
 			                OSD.add(0x01); // validity of data
+
+			                
 			                /** HomePosition **/
-			                OSD.add((double)510481055/(double)10000000); // in 1E-7 deg
-			                OSD.add((double)36827906/(double)10000000); // in 1E-7 deg
+			                OSD.add((double)510475389/(double)10000000); // in 1E-7 deg
+			                OSD.add((double)36853015/(double)10000000); // in 1E-7 deg
 			                OSD.add((double)5038/(double)1000); // in mm
 			                OSD.add(0x01); // validity of data 
 			              
@@ -73,7 +78,7 @@ public class QueueReader extends SerialReader {
 			                OSD.add(10);	 // climb(+) and sink(-) rate
 			                OSD.add(10);	// FlyingTime in seconds
 			                OSD.add(3000);	// Battery Voltage in 0.1 Volts
-			                OSD.add(15); // speed over ground in cm/s (2D)
+			                OSD.add(0); // speed over ground in cm/s (2D)
 			                OSD.add(90); // current flight direction in deg as angle to north
 			                OSD.add(90);  // current compass value in deg
 			                OSD.add(0);// current Nick angle in 1 deg
@@ -121,14 +126,15 @@ public class QueueReader extends SerialReader {
 			                
 			                OSD.add(0); // StatusFlags2 (since version 5 added)
 			                OSD.add(0); // setpoint for altitude
+			                OSD.add(20); //gas
 			                OSD.add(0); // actual current in 0.1A steps
-			                OSD.add(0);
 			                OSD.add(0); // used capacity in mAh
 			                OSD.add(0);
 			                readQueue.add(OSD);
+			            
 					}
 					
-				}, 3000, 3000);
+				}, 3000, 10000);
 				
 				
 				
