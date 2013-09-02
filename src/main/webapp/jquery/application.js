@@ -134,29 +134,29 @@ $(function () {
 					"version" : json.data[37]
 				});
 				
-            	document.getElementById("OSD0").innerHTML = "CurrentPosition: "+ OSD.currentPosition.Latitude+" /  "+ OSD.currentPosition.Longitude+" / "+ OSD.currentPosition.Altitude+"";
-            	document.getElementById("OSD1").innerHTML = "TargetPosition: "+ OSD.currentPosition.Latitude+" /  "+ OSD.currentPosition.Longitude+" / "+ OSD.currentPosition.Altitude+"";
-            	document.getElementById("OSD2").innerHTML = "HomePosition: "+ OSD.currentPosition.Latitude+" /  "+ OSD.currentPosition.Longitude+" / "+ OSD.currentPosition.Altitude+"";
-            	document.getElementById("OSD3").innerHTML = "CurrentWP/TotalWP: "+OSD.waypointIndex+ "/" + OSD.waypointNumber;
-            	document.getElementById("OSD4").innerHTML = "StatsInUse: " + OSD.satsInUse;
-            	document.getElementById("OSD5").innerHTML = "Altimeter (air pressure): " + OSD.altimeter;
-            	document.getElementById("OSD6").innerHTML = "Variometer (climb/sink rate): " + OSD.variometer;
-            	document.getElementById("OSD7").innerHTML = "FlyingTime" + OSD.flyingTime + "s";
-            	document.getElementById("OSD8").innerHTML = "Battery Voltage: " + OSD.uBat + "V";
-            	document.getElementById("OSD9").innerHTML = "GroundSpeed: " + OSD.groundSpeed + "cm/s";
-            	document.getElementById("OSD10").innerHTML = "Heading (angle to north): " + OSD.heading;
-            	document.getElementById("OSD11").innerHTML = "CompassHeading: " + OSD.compassHeading;
-            	document.getElementById("OSD12").innerHTML = "AngleNick: " + OSD.angleNick;
-            	document.getElementById("OSD13").innerHTML = "AngleRoll: " + OSD.angleRoll;
-            	document.getElementById("OSD14").innerHTML = "RCQuality: " + OSD.rcQuality;
-            	document.getElementById("OSD15").innerHTML = "OperatingRadius: " + OSD.OperatingRadius;
-            	document.getElementById("OSD16").innerHTML = "TopSpeed: " + OSD.TopSpeed;
-            	document.getElementById("OSD17").innerHTML = "TargetHoldTime: " + OSD.TargetHoldTime;
-            	document.getElementById("OSD18").innerHTML = "SetPointAltitude: " + OSD.SetpointAltitude;
-            	document.getElementById("OSD19").innerHTML = "Current: " + OSD.Current;
-            	document.getElementById("OSD18").innerHTML = "Gas: " + OSD.Gas;
-            	document.getElementById("OSD21").innerHTML = "UsedCapacity: " + OSD.UsedCapacity;
-            	document.getElementById("OSD22").innerHTML = "Version: " + OSD.version;
+//            	document.getElementById("OSD0").innerHTML = "CurrentPosition: "+ OSD.currentPosition.Latitude+" /  "+ OSD.currentPosition.Longitude+" / "+ OSD.currentPosition.Altitude+"";
+//            	document.getElementById("OSD1").innerHTML = "TargetPosition: "+ OSD.currentPosition.Latitude+" /  "+ OSD.currentPosition.Longitude+" / "+ OSD.currentPosition.Altitude+"";
+//            	document.getElementById("OSD2").innerHTML = "HomePosition: "+ OSD.currentPosition.Latitude+" /  "+ OSD.currentPosition.Longitude+" / "+ OSD.currentPosition.Altitude+"";
+//            	document.getElementById("OSD3").innerHTML = "CurrentWP/TotalWP: "+OSD.waypointIndex+ "/" + OSD.waypointNumber;
+//            	document.getElementById("OSD4").innerHTML = "StatsInUse: " + OSD.satsInUse;
+//            	document.getElementById("OSD5").innerHTML = "Altimeter (air pressure): " + OSD.altimeter;
+//            	document.getElementById("OSD6").innerHTML = "Variometer (climb/sink rate): " + OSD.variometer;
+//            	document.getElementById("OSD7").innerHTML = "FlyingTime" + OSD.flyingTime + "s";
+//            	document.getElementById("OSD8").innerHTML = "Battery Voltage: " + OSD.uBat + "V";
+//            	document.getElementById("OSD9").innerHTML = "GroundSpeed: " + OSD.groundSpeed + "cm/s";
+//            	document.getElementById("OSD10").innerHTML = "Heading (angle to north): " + OSD.heading;
+//            	document.getElementById("OSD11").innerHTML = "CompassHeading: " + OSD.compassHeading;
+//            	document.getElementById("OSD12").innerHTML = "AngleNick: " + OSD.angleNick;
+//            	document.getElementById("OSD13").innerHTML = "AngleRoll: " + OSD.angleRoll;
+//            	document.getElementById("OSD14").innerHTML = "RCQuality: " + OSD.rcQuality;
+//            	document.getElementById("OSD15").innerHTML = "OperatingRadius: " + OSD.OperatingRadius;
+//            	document.getElementById("OSD16").innerHTML = "TopSpeed: " + OSD.TopSpeed;
+//            	document.getElementById("OSD17").innerHTML = "TargetHoldTime: " + OSD.TargetHoldTime;
+//            	document.getElementById("OSD18").innerHTML = "SetPointAltitude: " + OSD.SetpointAltitude;
+//            	document.getElementById("OSD19").innerHTML = "Current: " + OSD.Current;
+//            	document.getElementById("OSD18").innerHTML = "Gas: " + OSD.Gas;
+//            	document.getElementById("OSD21").innerHTML = "UsedCapacity: " + OSD.UsedCapacity;
+//            	document.getElementById("OSD22").innerHTML = "Version: " + OSD.version;
             	
             	//update the currentPosition on the map
 				currentPos = new google.maps.Marker({

@@ -48,23 +48,22 @@ public class QueueReader extends SerialReader {
 				timer.scheduleAtFixedRate(new TimerTask(){
 					public void run(){
 						 ArrayList OSD = new ArrayList(); 
-
 			                /** CurrentPosition **/
 			                OSD.add("OSD");
-			                Waypoint_t wp_target = new Waypoint_t("new target");
-			                OSD.add(36827906/10000000); // in 1E-7 deg
-			                OSD.add(510481055/10000000); // in 1E-7 deg
-			                OSD.add(5038/1000); // in mm
+			                Waypoint_t wp_target = new Waypoint_t("new target");                          
+			                OSD.add((double)510481055/(double)10000000); // in 1E-7 deg
+			                OSD.add((double) 36827906/(double) 10000000); // in 1E-7 deg
+			                OSD.add((double)5038/(double)1000); // in mm
 			                OSD.add(0x01); // validity of data 
 			                /** TargetPosition **/
-			                OSD.add(36827906/10000000); // in 1E-7 deg
-			                OSD.add(510481055/10000000); // in 1E-7 deg
-			                OSD.add(5038/1000); // in mm
+			                OSD.add((double)510481055/(double)10000000); // in 1E-7 deg
+			                OSD.add((double)36827906/(double)10000000); // in 1E-7 deg
+			                OSD.add((double)5038/(double)1000); // in mm
 			                OSD.add(0x01); // validity of data
 			                /** HomePosition **/
-			                OSD.add(36827906/10000000); // in 1E-7 deg
-			                OSD.add(510481055/10000000); // in 1E-7 deg
-			                OSD.add(5038/1000); // in mm
+			                OSD.add((double)510481055/(double)10000000); // in 1E-7 deg
+			                OSD.add((double)36827906/(double)10000000); // in 1E-7 deg
+			                OSD.add((double)5038/(double)1000); // in mm
 			                OSD.add(0x01); // validity of data 
 			              
 			                OSD.add(0);  // index of current waypoints running from 0 to WaypointNumber-1
