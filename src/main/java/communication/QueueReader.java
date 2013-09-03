@@ -77,7 +77,7 @@ public class QueueReader extends SerialReader {
 			                OSD.add(20);	 // hight according to air pressure
 			                OSD.add(10);	 // climb(+) and sink(-) rate
 			                OSD.add(10);	// FlyingTime in seconds
-			                OSD.add(3000);	// Battery Voltage in 0.1 Volts
+			                OSD.add(30/10);	// Battery Voltage in 0.1 Volts
 			                OSD.add(0); // speed over ground in cm/s (2D)
 			                OSD.add(90); // current flight direction in deg as angle to north
 			                OSD.add(90);  // current compass value in deg

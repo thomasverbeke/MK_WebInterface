@@ -1,5 +1,5 @@
 //TODO reconnect feature & button
-var g1,g2,g3,g4,g6,g7;
+var g1,g2,g3,g4,g6,g7,g8;
 var subSocket; //we want to acces it outside of jquery
 $(function () {
     "use strict";
@@ -28,7 +28,7 @@ $(function () {
     request.onOpen = function(response) {
     	//invoked when the connection gets opened.	
     	if (response.transport == "websocket"){
-    		document.getElementById("serverLink").innerHTML = "<p>Connected using websockets</p>";  
+    		document.getElementById("serverLink").innerHTML = "<p title='Connection with the webserver OK'>Server Connection</p>";  
     	} else {
     		document.getElementById("serverLink").innerHTML = "<p>Connected using " + response.transport + "</p>";  
     	}
@@ -140,10 +140,13 @@ $(function () {
 				g4.refresh(OSD.heading);
 				
 				document.getElementById("flyingTimeValue").innerHTML = OSD.flyingTime ;
+				
+				g6.refresh(OSD.UsedCapacity);
+				g7.refresh(OSD.uBat);
+				g8.refresh(OSD.satsInUse);
+				
 				document.getElementById("currentWP").innerHTML = OSD.waypointIndex ;
 				document.getElementById("totalWP").innerHTML = "/"+OSD.waypointNumber ;
-				g6.refresh(OSD.UsedCapacity);
-				g7.refresh(OSD.satsInUse);
          	
             	//update the currentPosition on the map
 				currentPos = new google.maps.Marker({
@@ -170,7 +173,7 @@ $(function () {
 				});
 				
 				
-				document.getElementById("serialLink").innerHTML = '<p style="color: darkgreen;">Serial Link</p>';   
+				document.getElementById("serialLink").innerHTML = '<p title="Connection with the Coptermotion OK" style="color: darkgreen;">Serial Link</p>';   
             	console.log("Frame:",json.type,OSD); 
             break;
             
