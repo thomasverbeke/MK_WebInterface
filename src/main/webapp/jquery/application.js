@@ -138,7 +138,10 @@ $(function () {
 				g2.refresh(OSD.groundSpeed);
 				g3.refresh(OSD.altimeter);
 				g4.refresh(OSD.heading);
-				//g1.refresh(OSD.flyingTime);
+				
+				document.getElementById("flyingTimeValue").innerHTML = OSD.flyingTime ;
+				document.getElementById("currentWP").innerHTML = OSD.waypointIndex ;
+				document.getElementById("totalWP").innerHTML = "/"+OSD.waypointNumber ;
 				g6.refresh(OSD.UsedCapacity);
 				g7.refresh(OSD.satsInUse);
          	
@@ -167,7 +170,7 @@ $(function () {
 				});
 				
 				
-
+				document.getElementById("serialLink").innerHTML = '<p style="color: darkgreen;">Serial Link</p>';   
             	console.log("Frame:",json.type,OSD); 
             break;
             

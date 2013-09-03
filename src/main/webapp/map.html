@@ -332,6 +332,10 @@ h2 {
 	margin-left:10px;
 }
 
+#serialLink p{
+	color:red;
+}
+
 .wplist, wplist:visited{
 	margin-top:3px;
 	min-width: 30px;
@@ -344,6 +348,8 @@ h2 {
 
 #markerWindow{
 	color:black;
+	height:180px;
+	width:160px;
 }
 
 #DrawingMenu {	
@@ -527,7 +533,7 @@ height: 350px;
     	 var temp = "";
     	 for (var i=0; i<markersArray.length; i++){
     		 //markersArray[i].position.lat()
-    		 temp +="<div onmouseover='showMouseMarker(this)' onmouseout='clearMouseMarker(this)' class='wplist' id=wp_"+i+">WP_"+i+" <a onclick='removeWP("+i+")'>X</a></div>"
+    		 temp +="<div onmouseover='showMouseMarker(this)' onmouseout='clearMouseMarker(this)' class='wplist' id=wp_"+i+">WP "+i+" <a onclick='removeWP("+i+")'><img src='markerIcons/remove_small.png' style='cursor:pointer' title='Remove Waypoint'></a></div>"
     	 }
     	 document.getElementById("waypoint_list").innerHTML = temp;
     	 //console.log(markersArray);
@@ -571,6 +577,7 @@ height: 350px;
 				"<h2>WP"+(path.getLength()-1)+"</h2>"+
 				"<p><label>Latitude </label><input type='text' value='"+tmpArray[i].position.lat()+"' id='lat' /></p>"+
 				"<p><label>Longitude </label><input type='text' value='"+tmpArray[i].position.lng()+"' id='long' /></p>"+
+				"<p><a onclick='removeWP("+i+")' style='cursor:pointer'>Click to remove</a></p>"+
 				"</div>"
 				
 				//Do we need closure?
@@ -641,6 +648,7 @@ height: 350px;
 		"<h2>WP"+id+"</h2>"+
 		"<p><label>Latitude </label><input type='text' value='"+markersArray[id].position.lat()+"' id='lat' /></p>"+
 		"<p><label>Longitude </label><input type='text' value='"+markersArray[id].position.lng()+"' id='long' /></p>"+
+		"<a onclick='removeWP("+id+")' style='cursor:pointer'>Click to remove</a>"+
 		"</div>"
 		
 		infowindow.setContent(content);
@@ -868,6 +876,7 @@ height: 350px;
 				"<h2>WP"+(path.getLength()-1)+"</h2>"+
 				"<p><label>Latitude </label><input type='text' value='"+event.latLng.lat()+"' id='lat' /></p>"+
 				"<p><label>Longitude </label><input type='text' value='"+event.latLng.lng()+"' id='long' /></p>"+
+				"<p><a onclick='removeWP("+markersArray.length+")' style='cursor:pointer'>Click to remove</a></p>"+
 				"</div>"
 				
 				//Do we need closure?
@@ -1226,7 +1235,7 @@ height: 350px;
 				    font-size: 40px;
 				    margin: 0px;
 				    margin-top: 5px;
-				    color: black;">50</p>
+				    color: black;" id="flyingTimeValue">50</p>
 				
 				<p style="
 				    margin: 0px;
@@ -1236,12 +1245,28 @@ height: 350px;
 
   				<div id="g6"></div>				
   				<div id="g7"></div>
+  				<div style="float:left; margin-left:80px;">
+  				<p style="
+				    margin: 0px;
+				    margin-top: 6px;">Current Waypoint</p>
+				    
+				<p style="
+				    font-size: 45px;
+				    margin: 0px;
+				    margin-top: 5px;
+				    color: black;" id="currentWP">0</p>
+			 	
+			 	<p style="
+				    font-size: 25px;
+				    margin: 0px;
+					margin-top: -35px;
+					color: rgb(185,186,187);
+					margin-left: 25px;" id="totalWP">/0</p>
+				
+  				</div>
   			</div>
   			
   			<div id="server_status">
-  				<div id="FCStatusFlags">
-  					<p>FC Status Flags</p>
-  				</div>
   				<div id="serialLink" >
   					<p>Serial Link</p>
   				</div>
