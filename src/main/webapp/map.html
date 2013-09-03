@@ -532,10 +532,10 @@ height: 350px;
      
      function update_list(){
     	 //take our list container; loop over our list
-    	 var temp = "<div><label>#</label><label style=margin-left:20px>Altitude</label><label style=margin-left:10px>Remove</label></div>";
+    	 var temp = "<div><label>#</label><label style=margin-left:20px>Altitude (m)</label><label style=margin-left:10px>Remove</label></div>";
     	 for (var i=0; i<markersArray.length; i++){
     		 //markersArray[i].position.lat()
-    		 temp +="<div onmouseover='showMouseMarker(this)' onmouseout='clearMouseMarker(this)' class='wplist' id=wp_"+i+">WP "+i+" <input title='altitude' type='number' name='Change Altitude' value='8' min='1' max='100'><a onclick='removeWP("+i+")'><img src='markerIcons/remove_small.png' style='cursor:pointer; vertical-align: bottom;' title='Remove Waypoint'></a> </div>"
+    		 temp +="<div onmouseover='showMouseMarker(this)' onmouseout='clearMouseMarker(this)' class='wplist' id=wp_"+i+">WP "+i+" <input title='altitude' type='number' name='Change Altitude' value='8' min='1' max='100'><a style=margin-left:23px; onclick='removeWP("+i+")'><img src='markerIcons/remove_small.png' style='cursor:pointer; vertical-align: bottom;' title='Remove Waypoint'></a> </div>"
     	 }
     	 document.getElementById("waypoint_list").innerHTML = temp;
     	 //console.log(markersArray);
@@ -641,10 +641,13 @@ height: 350px;
      function showLegendIcon(icon){
     	 if (icon.name == "home_icon"){
     		 homePos.setIcon("markerIcons/home_small_orange.png");
+    		 homeIcon = "markerIcons/home_small_orange.png";
     	 } else if (icon.name == "target_icon"){
     		 targetPos.setIcon("markerIcons/target_small_orange.png");
+    		 targetIcon ="markerIcons/target_small_orange.png"; 
     	 } else if (icon.name == "current_icon"){
     		 currentPos.setIcon("markerIcons/current_small_orange.png");
+    		 currentIcon = "markerIcons/current_small_orange.png";
     	 } else {
     		 console.log("problem in highligh legend icon");
     	 }
@@ -654,10 +657,13 @@ height: 350px;
      function hideLegendIcon(icon){
     	 if (icon.name == "home_icon"){
     		 homePos.setIcon("markerIcons/home_small_grey.png");
+    		 homeIcon = "markerIcons/home_small_grey.png";
     	 } else if (icon.name == "target_icon"){
     		 targetPos.setIcon("markerIcons/target_small_grey.png");
+    		 targetIcon ="markerIcons/target_small_grey.png"; 
     	 } else if (icon.name == "current_icon"){
     		 currentPos.setIcon("markerIcons/current_small_grey.png");
+    		 currentIcon = "markerIcons/current_small_grey.png";
     	 } else {
     		 console.log("problem in highligh legend icon");
     	 }
@@ -798,7 +804,10 @@ height: 350px;
 		copter_param.elements["sizeY"].value = photoH;
 	}
      
-    var currentPos,homePos,targetPos; 
+    var currentPos,homePos,targetPos;
+    var currentIcon = 'markerIcons/current_small_grey.png';
+    var homeIcon = 'markerIcons/home_small_grey.png';
+    var targetIcon = 'markerIcons/target_small_grey.png'; 
 	function initialize() {
 			init_gauge();
 			//51.048557436570846 3.6861169325129595
@@ -1320,9 +1329,12 @@ height: 350px;
 	  	<div id="WPMenu">	
 	  		<div id="handleHor" onclick="toggle('WPMenu')"><p>» WAYPOINT LIST</p></div>
 	   	 	<br><br>
-	   	 	<div onclick="test()"><p>TEST Mapping</p></div>
 	   	 	
-	   	 	<div id="legend"><img name="home_icon" src="markerIcons/home_small_grey.png" onmouseover='showLegendIcon(this)' onmouseout='hideLegendIcon(this)' style=cursor:pointer;><img src="markerIcons/current_small_grey.png"  name="current_icon"  onmouseover='showLegendIcon(this)' onmouseout='hideLegendIcon(this)' style=cursor:pointer;><img name="target_icon"  src="markerIcons/target_small_grey.png" onmouseover='showLegendIcon(this)' onmouseout='hideLegendIcon(this)' style=cursor:pointer;></div>
+	   	 	<label style=font-style:italic>Legend</label>
+	   	 	<div id="legend"><img name="home_icon" src="markerIcons/home_small_grey.png" onclick='showLegendIcon(this)' onmouseover='showLegendIcon(this)' onmouseout='hideLegendIcon(this)' style=cursor:pointer;><img src="markerIcons/current_small_grey.png"  name="current_icon"  onclick='showLegendIcon(this)' onmouseover='showLegendIcon(this)' onmouseout='hideLegendIcon(this)' style=cursor:pointer;><img name="target_icon"  src="markerIcons/target_small_grey.png" onclick='showLegendIcon(this)' onmouseover='showLegendIcon(this)' onmouseout='hideLegendIcon(this)' style=cursor:pointer;></div>
+	    	
+	    	<br>
+	    	<label style=font-style:italic>List</label>
 	    	<div id="waypoint_list"></div>	
 	    	
 	    	
@@ -1336,6 +1348,8 @@ height: 350px;
 	    	<br><br>
 	    	<div>EXPORT TO WPL</div>
 	    	<div>IMPORT FROM WPL</div>
+	    	
+	    	<div onclick="test()"><p>TEST Mapping</p></div>
 	    	
   		</div>
   		<div id="WPMenu_hidden" onclick="toggle('WPMenu')">	

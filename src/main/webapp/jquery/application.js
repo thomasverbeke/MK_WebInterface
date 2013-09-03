@@ -147,29 +147,30 @@ $(function () {
 				
 				document.getElementById("currentWP").innerHTML = OSD.waypointIndex ;
 				document.getElementById("totalWP").innerHTML = "/"+OSD.waypointNumber ;
-         	
+				
+				currentPos.setMap(null);
             	//update the currentPosition on the map
 				currentPos = new google.maps.Marker({
 					position: new google.maps.LatLng(OSD.currentPosition.Latitude,OSD.currentPosition.Longitude),
 					map: map,
 					title:"Current Position",
-					icon : 'markerIcons/current_small_grey.png'
+					icon : currentIcon
 				});
-				
+				targetPos.setMap(null);
 				//update the targetPosition on the map
 				targetPos = new google.maps.Marker({
 					position: new google.maps.LatLng(OSD.targetPosition.Latitude,OSD.targetPosition.Longitude),
 					map: map,
 					title:"Target Position",
-					icon : 'markerIcons/target_small_grey.png'
+					icon : targetIcon
 				});
-				
+				homePos.setMap(null);
 				//update the HomePos on the map
 				homePos = new google.maps.Marker({
 					position: new google.maps.LatLng(OSD.homePosition.Latitude,OSD.homePosition.Longitude),
 					map: map,
 					title:"Home Position",
-					icon : 'markerIcons/home_small_grey.png'
+					icon : homeIcon
 				});
 				
 				
